@@ -1,0 +1,23 @@
+body {
+	padding-top: 50px;
+}
+
+.form-group {
+
+	&.required {
+		.control-label {
+			cursor: pointer;
+
+			&:after {
+				color: #d00;
+	    		content: "*";
+	    		margin-left: 2px;
+
+	    		font-family: 'Glyphicons Halflings';
+				font-weight: normal;
+				font-size: 10px;
+			}
+				
+		}
+	}
+}
