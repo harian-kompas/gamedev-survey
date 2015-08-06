@@ -2,6 +2,7 @@ body {
 	padding-top: 50px;
 }
 
+
 .form-group {
 
 	&.required {
@@ -20,4 +21,8 @@ body {
 				
 		}
 	}
+}
+
+.txt-right {
+	text-align: right;
 }
