@@ -20,7 +20,10 @@
 			);
 			$gamedev->get_api($apiOptions);
 			break;
-		
+		case 'processForm':
+			header('Content-type: text/plain');
+			$gamedev->save_users_inputs();
+			break;
 		default:
 			$gamedev->get_page($page);
 			break;

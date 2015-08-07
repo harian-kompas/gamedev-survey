@@ -92,6 +92,18 @@
 			unset($str);
 		}
 
+		public static function save_users_inputs() {
+			$studioName = trim($_POST['txt-studio-name']);
+			$studioUrl = trim($_POST['txt-studio-url']);
+			$studioLocation = trim($_POST['txt-studio-location']);
+			$personnels = $_POST['personnels'];
+
+			print_r($studioName."\r\n");
+			print_r($studioUrl."\r\n");
+			print_r($studioLocation."\r\n");
+			print_r($personnels);
+		}
+
 		private static function get_html_header() {
 			$str = '<head>';
 			$str .= '<meta charset="UTF-8">';
@@ -205,24 +217,24 @@
 
 			$str .= '<div class="col-md-8">';
 			
-			$str .= '<form id="the-survey" action="" method="post">';
+			$str .= '<form id="the-survey" action="index.php?p=processForm" method="post">';
 			
 			//studio name
 			$str .= '<div class="form-group required">';
 			$str .= '<label class="control-label" for="txt-studio-name">Nama Studio</label>';
-			$str .= '<input id="txt-studio-name" class="form-control" type="text" placeholder="Nama studio Anda" maxlength="255">';
+			$str .= '<input id="txt-studio-name" name="txt-studio-name" class="form-control" type="text" pattern="[a-zA-Z\s]{1,255}" placeholder="Nama studio Anda" maxlength="255">';
 			$str .= '</div>';
 
 			//studio url
 			$str .= '<div class="form-group">';
 			$str .= '<label class="control-label" for="txt-studio-url">Situs Studio</label>';
-			$str .= '<input id="txt-studio-url" class="form-control" type="text" placeholder="Alamat situs studio Anda" maxlength="255" value="http://">';
+			$str .= '<input id="txt-studio-url" name="txt-studio-url" class="form-control" type="text" placeholder="Alamat situs studio Anda" maxlength="255" value="http://">';
 			$str .= '</div>';
 
 			//studio location
 			$str .= '<div class="form-group required">';
 			$str .= '<label class="control-label" for="txt-studio-location">Lokasi Studio</label>';
-			$str .= '<select class="form-control" id="txt-studio-location">';
+			$str .= '<select class="form-control" id="txt-studio-location" name="txt-studio-location">';
 			$str .= '<option value="">Kota/kabupaten domisili</option>';
 			$str .= $optGroup;
 			$str .= '</optgroup>';
@@ -232,7 +244,7 @@
 			// studio start year
 			$str .= '<div class="form-group required">';
 			$str .= '<label class="control-label" for="txt-studio-start">Tahun Beroperasi</label>';
-			$str .= '<select class="form-control" id="txt-studio-start">'.$yearItems.'</select>';
+			$str .= '<select class="form-control" id="txt-studio-start" name="txt-studio-start">'.$yearItems.'</select>';
 			$str .= '</div>';
 			
 			// team members
@@ -245,7 +257,7 @@
 			}			
 			$str .= '<div class="col-md-6">';
 			$str .= '<div class="form-group">';
-			$str .= '<select class="form-control" id="txt-studio-personnels">'.$numPersonnels.'</select>';
+			$str .= '<select class="form-control" id="txt-studio-personnels" name="personnels[number][]">'.$numPersonnels.'</select>';
 			$str .= '</div>';
 			$str .= '</div>';
 
@@ -255,7 +267,7 @@
 
 			$str .= '<div class="col-md-6">';
 			$str .= '<div class="form-group">';
-			$str .= '<select class="form-control">'.$academicLevels.'</select>';
+			$str .= '<select class="form-control" name="personnels[edu][]">'.$academicLevels.'</select>';
 			$str .= '</div>';
 			$str .= '</div>';
 
@@ -267,38 +279,41 @@
 
 			// products
 			$str .= '<div class="form-group required">';
-			$str .= '<label class="control-label" for="txt-studio-products">Karya</label>';
-					
-			$str .= '<div id="products" class="row">';
 			
+					
+			$str .= '<div id="products">';
+			
+			$str .= '<div class="row">';
 			$str .= '<div class="col-md-4">';
 			$str .= '<div class="form-group">';
-			$str .= '<input id="txt-studio-products" class="form-control" type="text" placeholder="Judul karya" maxlength="255" value="">';
+			$str .= '<label class="control-label" for="txt-studio-products">Karya</label>';
+			$str .= '<input id="txt-studio-products" class="form-control" type="text" placeholder="Judul karya" name="products[name][]" maxlength="255" value="">';
 			$str .= '</div>';
 			$str .= '</div>';
 			
 			$str .= '<div class="col-md-3">';
 			$str .= '<div class="form-group">';
-			$str .= '<select class="form-control">';
-			$str .= '<option value="">Tahun terbit</option>';
-			$str .= $yearItems;
-			$str .= '</select>';
+			$str .= '<label class="control-label">Tahun terbit</label>';
+			$str .= '<select class="form-control" name="products[year][]">'.$yearItems.'</select>';
 			$str .= '</div>';
 			$str .= '</div>';
 			
 			$str .= '<div class="col-md-5">';
-			$str .= '<div class="form-group force-input-height">';
+			$str .= '<div class="form-group">';
+			$str .= '<label class="control-label">Platform</label>';
+			$str .= '<div class="checkbox">';
 			$str .= '<label class="checkbox-inline">';
-			$str .= '<input type="checkbox" value="desktop">Desktop';
+			$str .= '<input type="checkbox" name="products[platform][]" value="desktop">Desktop';
 			$str .= '</label>';
 			$str .= '<label class="checkbox-inline">';
-			$str .= '<input type="checkbox" value="mobile">Mobile';
+			$str .= '<input type="checkbox" name="products[platform][]" value="mobile">Mobile';
 			$str .= '</label>';
+			$str .= '</div>';
 			$str .= '</div>';
 			$str .= '</div>';
 
-			$str .= '</div>';
-
+			$str .= '</div>'; // .row
+			$str .= '</div>'; // #products
 			
 			$str .= '<div class="row"><div class="col-md-12 txt-right"><a id="btn-add-products" href="#">Tambah karya</a></div></div>';
 
@@ -306,7 +321,7 @@
 
 			// publications
 			foreach (GameDev::$arrPublications as $key => $value) {
-				$pubs .= '<div class="checkbox"><label><input type="checkbox" value="'.$key.'">'.$value.'</label></div>';
+				$pubs .= '<div class="checkbox"><label><input type="checkbox" value="'.$key.'" name="publications[]">'.$value.'</label></div>';
 			}
 
 			$str .= '<div class="form-group required">';
@@ -315,7 +330,7 @@
 			$str .= '</div>';
 			
 			// submit button
-			$str .= '<div class="form-group"><input class="btn btn-primary" type="submit" value="Kirim"></div>';
+			$str .= '<div class="form-group"><input id="btn-submit" class="btn btn-primary" type="submit" value="Kirim"></div>';
 
 			$str .= '</form>';
 			
