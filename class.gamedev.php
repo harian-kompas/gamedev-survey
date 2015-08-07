@@ -191,12 +191,13 @@
 			}
 
 			// studio start year
-			$yearStart = 2000;
+			
 			$yearEnd = (int)date('Y');
+			$yearStart = $yearEnd - 15;
 			$yearItems = '';
 
 			for($i = $yearStart; $i <= $yearEnd; $i++) {
-				$yearItems .= ($i === $yearEnd) ? '<option value="'.$i.'" selected="selected">'.$i.'</option>' : '<option value="'.$i.'">'.$i.'</option>';
+				$yearItems .= '<option value="'.$i.'">'.$i.'</option>';
 			}
 
 
@@ -204,7 +205,7 @@
 
 			$str .= '<div class="col-md-8">';
 			
-			$str .= '<form action="" method="post">';
+			$str .= '<form id="the-survey" action="" method="post">';
 			
 			//studio name
 			$str .= '<div class="form-group required">';
@@ -236,7 +237,7 @@
 			
 			// team members
 			$str .= '<div class="form-group required">';
-			$str .= '<label class="control-label">Anggota Tim</label>';
+			$str .= '<label class="control-label" for="txt-studio-personnels">Anggota Tim</label>';
 			$str .= '<div id="team-members" class="row">';
 
 			for ($i=1; $i <= 20; $i++) {
@@ -268,7 +269,7 @@
 			$str .= '<div class="form-group required">';
 			$str .= '<label class="control-label" for="txt-studio-products">Karya</label>';
 					
-			$str .= '<div class="row">';
+			$str .= '<div id="products" class="row">';
 			
 			$str .= '<div class="col-md-4">';
 			$str .= '<div class="form-group">';
@@ -278,7 +279,7 @@
 			
 			$str .= '<div class="col-md-3">';
 			$str .= '<div class="form-group">';
-			$str .= '<select class="form-control" id="txt-studio-personnels">';
+			$str .= '<select class="form-control">';
 			$str .= '<option value="">Tahun terbit</option>';
 			$str .= $yearItems;
 			$str .= '</select>';
@@ -286,18 +287,20 @@
 			$str .= '</div>';
 			
 			$str .= '<div class="col-md-5">';
+			$str .= '<div class="form-group force-input-height">';
 			$str .= '<label class="checkbox-inline">';
-			$str .= '<input type="checkbox" id="inlineCheckbox1" value="option1">Desktop';
+			$str .= '<input type="checkbox" value="desktop">Desktop';
 			$str .= '</label>';
 			$str .= '<label class="checkbox-inline">';
-			$str .= '<input type="checkbox" id="inlineCheckbox2" value="option2">Mobile';
+			$str .= '<input type="checkbox" value="mobile">Mobile';
 			$str .= '</label>';
+			$str .= '</div>';
 			$str .= '</div>';
 
 			$str .= '</div>';
 
 			
-			$str .= '<div class="row"><div class="col-md-8"></div><div class="col-md-4 txt-right"><a href="#">Tambah karya</a></div></div>';
+			$str .= '<div class="row"><div class="col-md-12 txt-right"><a id="btn-add-products" href="#">Tambah karya</a></div></div>';
 
 			$str .= '</div>';
 
