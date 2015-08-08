@@ -52,7 +52,7 @@
 						break;
 					
 					default:
-						# code...
+						$str = GameDev::get_api_survey_result();
 						break;
 				}
 
@@ -93,15 +93,191 @@
 		}
 
 		public static function save_users_inputs() {
-			$studioName = trim($_POST['txt-studio-name']);
-			$studioUrl = trim($_POST['txt-studio-url']);
-			$studioLocation = trim($_POST['txt-studio-location']);
-			$personnels = $_POST['personnels'];
+			$now = date('Y-m-d H:i:s');
+			$studioName = GameDev::sanitize_inputs($_POST['txt-studio-name']);
+			$studioUrl = (!empty($_POST['txt-studio-url']) || $_POST['txt-studio-url'] !== 'http://') ? GameDev::sanitize_inputs($_POST['txt-studio-url']) : '';
+			$studioLocation = GameDev::sanitize_inputs($_POST['txt-studio-location']);
+			$studioStart = (int)($_POST['txt-studio-start']);
+			$rawPersonnels = $_POST['personnels'];
+			$rawProducts = $_POST['products'];
+			$rawPublications = $_POST['publications'];
 
-			print_r($studioName."\r\n");
-			print_r($studioUrl."\r\n");
-			print_r($studioLocation."\r\n");
-			print_r($personnels);
+			$personnels = '';
+			$personnelCount = 0;
+			$products = '';
+			$publications = '';
+
+			foreach ($rawPersonnels['number'] as $key => $value) {
+				$personnels .= $value.'|'.$rawPersonnels['edu'][$key].';';
+				$personnelCount += (int)$value;
+			}
+
+			foreach ($rawProducts['name'] as $key => $value) {
+				$productName = isset($value) ? GameDev::sanitize_inputs($value) : '';
+				$productYear = isset($rawProducts['year'][$key]) ? (int)$rawProducts['year'][$key] : '';
+				$productPlatforms = isset($rawProducts['platform'][$key]) ? $rawProducts['platform'][$key] : array();
+				$platforms = '';
+
+				if (!empty($productName) && !empty($productYear) && !empty($productPlatforms)) {
+
+					foreach ($productPlatforms as $keyPlatform => $valuePlatform) {
+						$platforms .= $valuePlatform.',';
+					}
+
+					$products .= $productName.'|'.$productYear.'|'.substr($platforms, 0, -1).';';
+				}
+			}
+
+			foreach ($rawPublications as $key => $value) {
+				$publications .= $value.';';
+			}
+
+			$personnels = substr($personnels, 0, -1);
+			$products = substr($products, 0, -1);
+			$publications = substr($publications, 0, -1);
+
+			if (empty($studioName) || empty($studioLocation)) {
+				exit('Tiada nama studio');
+			}
+
+			if (empty($studioLocation)) {
+				exit('Tiada lokasi studio');
+			}
+
+			if (!is_numeric($studioStart) || $studioStart <= 0) {
+				exit('Tahun studio berdiri tak valid');
+			}
+
+			if (empty($personnels)) {
+				exit('Tiada anggota tim studio');
+			}
+
+			if (empty($products)) {
+				exit('Tiada produk. Aneh kan?');
+			}
+
+			if (empty($publications)) {
+				exit('Tiada publikasi produk');
+			}
+
+			$query = 'insert into survey_results 
+					  (datetime, studio_name, studio_url, studio_location, studio_start, studio_personnels, personnels_educations, products, publications)
+					  values 
+					  (:now, :studioName, :studioUrl, :studioLocation, :studioStart, :personnelCount, :personnels, :products, :publications)';
+
+			$stat = GameDev::$pdo->prepare($query);
+			$stat->bindParam(':now', $now);
+			$stat->bindParam(':studioName', $studioName);
+			$stat->bindParam(':studioUrl', $studioUrl);
+			$stat->bindParam(':studioLocation', $studioLocation);
+			$stat->bindParam(':studioStart', $studioStart);
+			$stat->bindParam(':personnelCount', $personnelCount);
+			$stat->bindParam(':personnels', $personnels);
+			$stat->bindParam(':products', $products);
+			$stat->bindParam(':publications', $publications);
+			$stat->execute();
+
+			header('Location: index.php');
+			exit;
+
+			// print_r($studioName."\r\n");
+			// print_r($studioUrl."\r\n");
+			// print_r($studioLocation."\r\n");
+			// print_r($rawPersonnels);
+			// print_r($personnels."\r\n");
+			// print_r($personnelCount."\r\n");
+			// print_r($rawProducts);
+			// print_r($products);
+			// print_r($rawPublications);
+			// print_r($publications);
+		}
+
+		private static function get_api_survey_result() {
+			$str = array();
+			$query = 'select survey_results.id, survey_results.datetime, survey_results.studio_name, survey_results.studio_url, survey_results.studio_location, survey_results.studio_start, survey_results.studio_personnels, survey_results.personnels_educations, survey_results.products, survey_results.publications,
+					  location.nid, location.name as location_name, location.latitude, location.longitude
+					  from survey_results
+					  left join location on survey_results.studio_location = location.nid
+					  order by id asc';
+			$stat = GameDev::$pdo->prepare($query);
+			$stat->execute();
+			
+			$results = $stat->fetchAll(PDO::FETCH_ASSOC);
+
+			foreach ($results as $result) {
+				$id = $result['id'];
+				$datetime = new DateTime($result['datetime']);
+				$studioName = $result['studio_name'];
+				$studioUrl = (empty($result['studio_url']) || $result['studio_url'] === 'http://') ? null : $result['studio_url'];
+				$studioStart = (int)$result['studio_start'];
+				$studioPersonnels = (int)$result['studio_personnels'];
+				$personnelsEdu = explode(';', $result['personnels_educations']);
+				$studioProducts = explode(';', $result['products']);
+				$productPublications = explode(';', $result['publications']);
+				
+				$locationNid = (int)$result['nid'];
+				$locationName = $result['location_name'];
+				$locationLatitude = $result['latitude'];
+				$locationLongitude = $result['longitude'];
+
+				$edu = array();
+				$products = array();
+				$publications = array();
+				
+				foreach ($personnelsEdu as $key => $rawValue) {
+					$values = explode('|', $rawValue);
+					
+					if (!empty($values)) {
+						$edu[] = array(
+							'num' => (int)$values[0],
+							'degree' => $values[1]
+						);
+					}
+				}
+
+
+				foreach ($studioProducts as $rawProducts) {
+					$productData = explode('|', $rawProducts);
+					$products[] = array(
+						'name' => $productData[0],
+						'year' => $productData[1],
+						'platform' => $productData[2]
+					);
+				}
+
+				foreach ($productPublications as $productPublication) {
+					$publications[] = GameDev::$arrPublications[$productPublication];
+				}
+
+
+				$str[] = array(
+					'id' => $id,
+					'datetime' => array (
+						'iso8601' => $datetime->format('c')
+					),
+					'studio' => array(
+						'name' => $studioName,
+						'url' => $studioUrl,
+						'location' => array(
+							'nid' => $locationNid,
+							'name' => $locationName,
+							'latitude' => (float)$locationLatitude,
+							'longitude' => (float)$locationLongitude
+						),
+						'yearStart' => $studioStart,
+						'personnels' => array(
+							'total' => $studioPersonnels,
+							'education' => $edu
+						),
+						'products' => $products,
+						'productsPublication' => $publications
+					)
+				); 
+
+				unset($edu, $products);
+			}
+
+			return $str;
 		}
 
 		private static function get_html_header() {
@@ -303,10 +479,10 @@
 			$str .= '<label class="control-label">Platform</label>';
 			$str .= '<div class="checkbox">';
 			$str .= '<label class="checkbox-inline">';
-			$str .= '<input type="checkbox" name="products[platform][]" value="desktop">Desktop';
+			$str .= '<input type="checkbox" name="products[platform][0][]" value="desktop">Desktop';
 			$str .= '</label>';
 			$str .= '<label class="checkbox-inline">';
-			$str .= '<input type="checkbox" name="products[platform][]" value="mobile">Mobile';
+			$str .= '<input type="checkbox" name="products[platform][0][]" value="mobile">Mobile';
 			$str .= '</label>';
 			$str .= '</div>';
 			$str .= '</div>';
@@ -337,6 +513,16 @@
 			$str .= '</div>'; // .col-md-8
 			
 			$str .= '</div>'; // .container
+
+			return $str;
+		}
+
+		private static function sanitize_inputs($str) {
+			$str = trim($str);
+			$str = strip_tags($str);
+			if(get_magic_quotes_gpc()) {
+				$str = stripslashes($str);
+			}
 
 			return $str;
 		}

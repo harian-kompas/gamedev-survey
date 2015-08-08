@@ -81,6 +81,9 @@ $(document).ready(function () {
 	}
 
 	if ($('#btn-add-products').length) {
+
+		var c = 1
+
 		$('#btn-add-products').click(function (e) {
 			// prevent default action
 			e.preventDefault();
@@ -120,9 +123,11 @@ $(document).ready(function () {
 				cnFormControl.attr('type', 'text');
 				cnFormControl.attr('placeholder', 'Judul karya');
 				cnFormControl.attr('maxlength', 255);
+				cnFormControl.attr('name', 'products[name][]');
 
 				cyFormGroup.addClass('form-group');
 				cyFormControl.addClass('form-control');
+				cyFormControl.attr('name', 'products[year][]');
 				// console.log(startYear);
 				for (i = startYear; i <= currentYear; i++) {
 					var options = $('<option></option>');
@@ -143,10 +148,12 @@ $(document).ready(function () {
 					labels.addClass('checkbox-inline');
 					inputs.attr('type', 'checkbox');
 					inputs.attr('value', element);
+					inputs.attr('name', 'products[platform][' + c + '][]');
 
 					labels.append(inputs).append(document.createTextNode(element.ucfirst()));
 
 					cpDocFrag.append(labels);
+					
 				});
 
 				cpWrapper.append(cpDocFrag);
@@ -174,6 +181,8 @@ $(document).ready(function () {
 					colAdmin.remove();
 					row.remove();
 				});
+
+				c++;
 			}
 
 		});
