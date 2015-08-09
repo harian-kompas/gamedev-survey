@@ -285,17 +285,39 @@ $(document).ready(function () {
 			
 			console.log(distinctYearStudio);
 
+			function getMapNav(years) {
+				var navFrag = $(document.createDocumentFragment());
+
+				$.each(years, function(index, element) {
+					var items = $('<li></li>'),
+						links = $('<a></a>'),
+						isActive = (index === 0) ? ' active' : '';
+
+					items.addClass('map-nav-items' + isActive);
+					links.text(element);
+					links.addClass('map-nav-links');
+					links.attr('href', '#');
+
+					items.append(links);
+					navFrag.append(items);
+
+				});
+
+				$('#map-nav').append(navFrag);
+			}
+
 			function mapInit() {
 				map = new google.maps.Map(document.getElementById('map'), {
 					center: {
-						lat: -34.397, 
-						lng: 150.644
+						lat: -0.789275, 
+						lng: 113.921327
 					},
-					zoom: 8
+					zoom: 4
 				});
 			}
 
 			google.maps.event.addDomListener(window, 'load', mapInit);
+			getMapNav(distinctYearStudio);
 
 		});
 		
