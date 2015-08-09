@@ -78,6 +78,8 @@
 			if ($page === 'formulir') {
 				$str .= GameDev::get_page_intro();
 				$str .= GameDev::get_survey_form();
+			} else if ($page === 'hasil') {
+				$str .= GameDev::get_data_visualization_page();
 			} else {
 				$str .= 'tiada parameter';
 			}
@@ -130,15 +132,18 @@
 				}
 			}
 
-			foreach ($rawPublications as $key => $value) {
-				$publications .= $value.';';
+			if (!empty($rawPublications)) {
+				foreach ($rawPublications as $key => $value) {
+					$publications .= $value.';';
+				}
 			}
+				
 
 			$personnels = substr($personnels, 0, -1);
 			$products = substr($products, 0, -1);
 			$publications = substr($publications, 0, -1);
 
-			if (empty($studioName) || empty($studioLocation)) {
+			if (empty($studioName)) {
 				exit('Tiada nama studio');
 			}
 
@@ -161,6 +166,18 @@
 			if (empty($publications)) {
 				exit('Tiada publikasi produk');
 			}
+
+			//check if studio is alrady in database
+			$queryCheck = 'select count(id) as cc from survey_results where studio_name=:studioName';
+			$statCheck = GameDev::$pdo->prepare($queryCheck);
+			$statCheck->bindParam(':studioName', $studioName, PDO::PARAM_STR);
+			$statCheck->execute();
+			$resultCheck = $statCheck->fetch(PDO::FETCH_ASSOC);
+			// print_r($resultCheck);
+			if ($resultCheck['cc'] > 0) {
+				exit('Studio '.$studioName.' sudah ada');
+			}
+
 
 			$query = 'insert into survey_results 
 					  (datetime, studio_name, studio_url, studio_location, studio_start, studio_personnels, personnels_educations, products, publications)
