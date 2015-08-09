@@ -97,7 +97,7 @@
 		public static function save_users_inputs() {
 			$now = date('Y-m-d H:i:s');
 			$studioName = GameDev::sanitize_inputs($_POST['txt-studio-name']);
-			$studioUrl = (!empty($_POST['txt-studio-url']) || $_POST['txt-studio-url'] !== 'http://') ? GameDev::sanitize_inputs($_POST['txt-studio-url']) : '';
+			$studioUrl = (!empty($_POST['txt-studio-url']) && $_POST['txt-studio-url'] !== 'http://') ? GameDev::sanitize_inputs($_POST['txt-studio-url']) : '';
 			$studioLocation = GameDev::sanitize_inputs($_POST['txt-studio-location']);
 			$studioStart = (int)($_POST['txt-studio-start']);
 			$rawPersonnels = $_POST['personnels'];
@@ -302,8 +302,12 @@
 
 		private static function get_page_footer() {
 			$str = '<footer>';
-			$str .= '<div class="container">';
-			$str .= 'Sumber data nama daerah: <a href="http://data.go.id/dataset/daftar-nama-daerah" target="_blank">data.go.id</a>';
+			$str .= '<div class="container-fluid footer">';
+			$str .= '<div class="col-md-12 txt-right">';
+			$str .= '<span class="footer-span">'.date('Y').' PT Kompas Media Nusantara</span>';
+			$str .= '<a class="link-ico-32" href="https://github.com/harian-kompas/gamedev-survey" target="_blank" title="Hayuk berkontribusi untuk repositori ini :D"><img src="img/GitHub-Mark-32px.png"></a>';
+			$str .= '</div>';
+			// $str .= 'Sumber data nama daerah: <a href="http://data.go.id/dataset/daftar-nama-daerah" target="_blank">data.go.id</a>';
 			$str .= '</div>';
 			$str .= '</footer>';
 
@@ -509,6 +513,7 @@
 			
 			// submit button
 			$str .= '<div class="form-group"><input id="btn-submit" class="btn btn-primary" type="submit" value="Kirim"></div>';
+			$str .= '<div class="form-group"><p>Sumber data nama daerah: <a href="http://data.go.id/dataset/daftar-nama-daerah" target="_blank">data.go.id</a></p></div>';
 
 			$str .= '</form>';
 			

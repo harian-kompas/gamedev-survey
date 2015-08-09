@@ -2,6 +2,16 @@ body {
 	padding-top: 50px;
 }
 
+.footer {
+	padding: 15px 0;
+}
+
+.footer-span {
+	display: inline-block;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
 .force-input-height {
 	height: 34px;
 }
@@ -24,6 +34,13 @@ body {
 				
 		}
 	}
+}
+
+.link-ico-32 {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	vertical-align: middle;
 }
 
 .txt-right {
