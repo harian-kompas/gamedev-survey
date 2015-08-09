@@ -88,6 +88,7 @@
 
 			$str .= '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>';
 			$str .= '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>';
+			$str .= '<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>';
 			$str .= '<script src="js/gamedev.js"></script>';
 			$str .= '</body>';
 			$str .= '</html>';
@@ -211,6 +212,8 @@
 			// print_r($publications);
 		}
 
+
+
 		private static function get_api_survey_result() {
 			$str = array();
 			$query = 'select survey_results.id, survey_results.datetime, survey_results.studio_name, survey_results.studio_url, survey_results.studio_location, survey_results.studio_start, survey_results.studio_personnels, survey_results.personnels_educations, survey_results.products, survey_results.publications,
@@ -296,6 +299,23 @@
 				unset($edu, $products);
 			}
 
+			return $str;
+		}
+
+		private static function get_data_visualization_page() {
+			
+			// intro
+			$str = '<div class="container-fluid full-width txt-center">';
+			$str .= '<h1>Industri Permainan Elektronik di Indonesia</h1>';
+			$str .= '</div>';
+
+			// map
+
+			$str .= '<div class="container-fluid full-width txt-center">';
+			$str .= '<h3>Peta Persebaran Industri Berdasarkan Tahun</h3>';
+			$str .= '<ul class="map-nav"></ul>';
+			$str .= '<div id="map" class="map-canvas"></div>';
+			$str .= '</div>';
 			return $str;
 		}
 

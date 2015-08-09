@@ -1,8 +1,24 @@
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, maxerr: 50, regexp: true, browser: true, white: true */
+/*global $, google */
+
 $(document).ready(function () {
+
+	Array.prototype.contains = function (a) {
+		var len = this.length,
+			i;
+
+		for (i = 0; i < len; i++) {
+			if (this[i] === a) {
+				return true;
+			}
+		}
+
+		return false;
+	};
 
 	String.prototype.ucfirst = function () {
 		return this.charAt(0).toUpperCase() + this.slice(1);
-	}
+	};
 
 	if ($('#btn-add-personnels').length) {
 		$('#btn-add-personnels').click(function (e) {
@@ -82,7 +98,7 @@ $(document).ready(function () {
 
 	if ($('#btn-add-products').length) {
 
-		var c = 1
+		var c = 1;
 
 		$('#btn-add-products').click(function (e) {
 			// prevent default action
@@ -248,4 +264,43 @@ $(document).ready(function () {
 
 	}
 
+	if ($('#map').length) {
+
+		$.getJSON('index.php?p=api', function (data) {
+			var map,
+				getDistinctYear = function () {
+					var a = [];
+
+					$.each(data, function (index, element) {
+						var year = element.studio.yearStart;
+						if (!a.contains(year)) {
+							a.push(year);
+						}
+						
+					});
+
+					return a.sort();
+				},
+				distinctYearStudio = getDistinctYear();
+			
+			console.log(distinctYearStudio);
+
+			function mapInit() {
+				map = new google.maps.Map(document.getElementById('map'), {
+					center: {
+						lat: -34.397, 
+						lng: 150.644
+					},
+					zoom: 8
+				});
+			}
+
+			google.maps.event.addDomListener(window, 'load', mapInit);
+
+		});
+		
+	}
+
 });
+
+// data visualiations

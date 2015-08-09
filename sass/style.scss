@@ -2,6 +2,13 @@ body {
 	padding-top: 50px;
 }
 
+.container-fluid {
+
+	&.full-width {
+		padding: 0;
+	}
+}
+
 .footer {
 	padding: 15px 0;
 }
@@ -41,6 +48,15 @@ body {
 	width: 32px;
 	height: 32px;
 	vertical-align: middle;
+}
+
+.map-canvas {
+	width:100%;
+	height: 480px;
+}
+
+.txt-center {
+	text-align: center;
 }
 
 .txt-right {
