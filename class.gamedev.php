@@ -11,7 +11,9 @@
 
 				GameDev::$arrNav = array('Formulir', 'Hasil', 'API');
 				GameDev::$arrAcademics = array(
-					'menengah' => 'SMA/SMK',
+					'dasar' => 'SD',
+					'menengahpertama' => 'SMP',
+					'menengahatas' => 'SMA/SMK',
 					'd1' => 'D I',
 					'd2' => 'D II',
 					'd3' => 'D III',
@@ -230,7 +232,7 @@
 					if (!empty($values)) {
 						$edu[] = array(
 							'num' => (int)$values[0],
-							'degree' => $values[1]
+							'degree' => GameDev::$arrAcademics[$values[1]]
 						);
 					}
 				}
@@ -251,7 +253,7 @@
 
 
 				$str[] = array(
-					'id' => $id,
+					// 'id' => $id,
 					'datetime' => array (
 						'iso8601' => $datetime->format('c')
 					),
@@ -425,7 +427,7 @@
 			
 			// team members
 			$str .= '<div class="form-group required">';
-			$str .= '<label class="control-label" for="txt-studio-personnels">Anggota Tim</label>';
+			$str .= '<label class="control-label" for="txt-studio-personnels">Anggota Tetap Tim</label>';
 			$str .= '<div id="team-members" class="row">';
 
 			for ($i=1; $i <= 20; $i++) {
