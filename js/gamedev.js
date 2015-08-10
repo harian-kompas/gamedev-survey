@@ -272,7 +272,6 @@ if ($('#map').length) {
 	function drawCharts() {
 		drawDistributionMap();
 		drawAcademicChart();
-
 	}
 
 	function drawAcademicChart() {
@@ -312,7 +311,7 @@ if ($('#map').length) {
 		$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
 
 			var distinctYears = data.summaries.distinctStudioStartYears;
-
+			
 			function insertYearNavigation() {
 				var navFrag = $(document.createDocumentFragment()),
 					displayContent = function(year) {
@@ -326,6 +325,7 @@ if ($('#map').length) {
 							googleMapData;
 
 						$.each(allContents, function(index, element) {
+
 							if (element.year === year) {
 								selectedContents = element.location
 							}
@@ -376,7 +376,7 @@ if ($('#map').length) {
 
 				$('#map-nav').append(navFrag);
 
-				displayContent(distinctYears[0]);
+				displayContent(parseInt(distinctYears[0], 10));
 			}
 
 
