@@ -14,10 +14,10 @@
 					'dasar' => 'SD',
 					'menengahpertama' => 'SMP',
 					'menengahatas' => 'SMA/SMK',
-					'd1' => 'D I',
-					'd2' => 'D II',
-					'd3' => 'D III',
-					'd4' => 'D IV',
+					'd1' => 'D-1',
+					'd2' => 'D-2',
+					'd3' => 'D-3',
+					'd4' => 'D-4',
 					's1' => 'S-1',
 					's2' => 'S-2',
 					's3' => 'S-3'
@@ -52,7 +52,9 @@
 							);
 						}
 						break;
-					
+					case 'curang':
+						$str = GameDev::get_api_survey_result(true);
+						break;
 					default:
 						$str = GameDev::get_api_survey_result();
 						break;
@@ -86,10 +88,11 @@
 
 			$str .= GameDev::get_page_footer();
 
-			$str .= '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>';
-			$str .= '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>';
-			$str .= '<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>';
-			$str .= '<script src="js/gamedev.js"></script>';
+			$str .= '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>';
+			$str .= '<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>';
+			// $str .= '<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>';
+			$str .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+			$str .= '<script type="text/javascript" src="js/gamedev.js"></script>';
 			$str .= '</body>';
 			$str .= '</html>';
 
@@ -214,8 +217,13 @@
 
 
 
-		private static function get_api_survey_result() {
-			$str = array();
+		private static function get_api_survey_result($doCheat = false) {
+			$str = '';
+
+
+			// get details
+			$strDetails = array();
+			$studioPersonnelsNumber = 0;
 			$query = 'select survey_results.id, survey_results.datetime, survey_results.studio_name, survey_results.studio_url, survey_results.studio_location, survey_results.studio_start, survey_results.studio_personnels, survey_results.personnels_educations, survey_results.products, survey_results.publications,
 					  location.nid, location.name as location_name, location.latitude, location.longitude
 					  from survey_results
@@ -225,6 +233,17 @@
 			$stat->execute();
 			
 			$results = $stat->fetchAll(PDO::FETCH_ASSOC);
+
+			$eduSD = 0;
+			$eduSMP = 0;
+			$eduSMA = 0;
+			$eduD1 = 0;
+			$eduD2 = 0;
+			$eduD3 = 0;
+			$eduD4 = 0;
+			$eduS1 = 0;
+			$eduS2 = 0;
+			$eduS3 = 0;
 
 			foreach ($results as $result) {
 				$id = $result['id'];
@@ -243,6 +262,7 @@
 				$locationLongitude = $result['longitude'];
 
 				$edu = array();
+				
 				$products = array();
 				$publications = array();
 				
@@ -250,10 +270,33 @@
 					$values = explode('|', $rawValue);
 					
 					if (!empty($values)) {
+						$num = (int)$values[0];
 						$edu[] = array(
-							'num' => (int)$values[0],
+							'num' => $num,
 							'degree' => GameDev::$arrAcademics[$values[1]]
 						);
+
+						if ($values[1] === 'dasar') {
+							$eduSD += $num;
+						} else if ($values[1] === 'menengahpertama') {
+							$eduSMP += $num;
+						} else if ($values[1] === 'menengahatas') {
+							$eduSMA += $num;
+						} else if ($values[1] === 'd1') {
+							$eduD1 += $num;
+						} else if ($values[1] === 'd2') {
+							$eduD2 += $num;
+						} else if ($values[1] === 'd3') {
+							$eduD3 += $num;
+						} else if ($values[1] === 'd4') {
+							$eduD4 += $num;
+						} else if ($values[1] === 's1') {
+							$eduS1 += $num;
+						} else if ($values[1] === 's2') {
+							$eduS2 += $num;
+						} else if ($values[1] === 's3') {
+							$eduS3 += $num;
+						}
 					}
 				}
 
@@ -272,7 +315,7 @@
 				}
 
 
-				$str[] = array(
+				$strDetails[] = array(
 					// 'id' => $id,
 					'datetime' => array (
 						'iso8601' => $datetime->format('c')
@@ -294,9 +337,140 @@
 						'products' => $products,
 						'productsPublication' => $publications
 					)
-				); 
+				);
+
+				$studioPersonnelsNumber += $studioPersonnels;
 
 				unset($edu, $products);
+			}
+
+			if ($doCheat) {
+				
+				//get distinct sudio years
+				$queryStudioYears = 'select distinct studio_start from survey_results order by studio_start asc';
+				$statStudioYears = GameDev::$pdo->prepare($queryStudioYears);
+				$statStudioYears->execute();
+				$resultsStudioYears = $statStudioYears->fetchAll(PDO::FETCH_ASSOC);
+
+				$distinctStudioStartYears = array();
+
+				foreach ($resultsStudioYears as $resultStudioYear) {
+					$distinctStudioStartYears[] = $resultStudioYear['studio_start'];
+				}
+
+				// get distinct studio location per year
+				$studioDistributionsPerYear = array();
+				foreach ($distinctStudioStartYears as $distinctYear) {
+					$queryDistinctLocation = 'select distinct survey_results.studio_location, 
+											  location.name, location.latitude, location.longitude
+											  from survey_results 
+											  left join location on location.nid=survey_results.studio_location
+											  where survey_results.studio_start=:yearStart';
+					$statDistinctLocation = GameDev::$pdo->prepare($queryDistinctLocation);
+					$statDistinctLocation->bindParam(':yearStart', $distinctYear);
+					$statDistinctLocation->execute();
+					$resultsDistinctLocation = $statDistinctLocation->fetchAll(PDO::FETCH_ASSOC);
+
+					$distributionLocation = array();
+
+					foreach ($resultsDistinctLocation as $resultDistinctLocation) {
+						$locationID = $resultDistinctLocation['studio_location'];
+						$queryStudiosInLocation = 'select studio_name from survey_results where studio_start=:yearStart and studio_location=:studioLocation';
+						$statStudiosInLocation = GameDev::$pdo->prepare($queryStudiosInLocation);
+						$statStudiosInLocation->bindParam(':yearStart', $distinctYear);
+						$statStudiosInLocation->bindParam(':studioLocation', $locationID);
+						$statStudiosInLocation->execute();
+						$resultsStudiosInLocation = $statStudiosInLocation->fetchAll(PDO::FETCH_ASSOC);
+						$studiosInLocation = array();
+
+						foreach ($resultsStudiosInLocation as $resultStudiosInLocation) {
+							$studiosInLocation[] = $resultStudiosInLocation['studio_name'];
+						}
+
+						$distributionLocation[] = array(
+							'name' => $resultDistinctLocation['name'],
+							'lat' => $resultDistinctLocation['latitude'],
+							'lng' => $resultDistinctLocation['longitude'],
+							'studios' => $studiosInLocation
+						);
+					}
+
+					$studioDistributionsPerYear[] = array(
+						'year' => (int)$distinctYear,
+						'location' => $distributionLocation
+					);
+				}
+
+
+				// foreach ($strDetails as $strDetail) {
+				// 	$locationData = $strDetail['studio']['location'];
+				// 	print_r($locationData);
+				// }
+				
+				
+
+
+				// get distinct game year
+
+
+
+
+				$str = array(
+					'summaries' => array(
+						'distinctStudioStartYears' => $distinctStudioStartYears,
+						'studioDistributionsPerYear' => $studioDistributionsPerYear,
+						'distinctGameYears' => null,
+						'personnels' => array(
+							'total' => $studioPersonnelsNumber,
+							'degree' => array(
+								array(
+									'name' => 'SD',
+									'total' => $eduSD
+								),
+								array(
+									'name' => 'SMP',
+									'total' => $eduSMP
+								),
+								array(
+									'name' => 'SMA/SMK',
+									'total' => $eduSMA
+								),
+								array(
+									'name' => 'D-1',
+									'total' => $eduD1
+								),
+								array(
+									'name' => 'D-2',
+									'total' => $eduD2
+								),
+								array(
+									'name' => 'D-3',
+									'total' => $eduD3
+								),
+								array(
+									'name' => 'D-4',
+									'total' => $eduD4
+								),
+								array(
+									'name' => 'S-1',
+									'total' => $eduS1
+								),
+								array(
+									'name' => 'S-2',
+									'total' => $eduS2
+								),
+								array(
+									'name' => 'S-3',
+									'total' => $eduS3
+								)
+							)
+						)
+					),
+					'surveyResultDetails' => $strDetails
+				);
+				
+			} else {
+				$str = $strDetails;
 			}
 
 			return $str;
@@ -316,6 +490,17 @@
 			$str .= '<ul id="map-nav" class="map-nav"></ul>';
 			$str .= '<div id="map" class="map-canvas"></div>';
 			$str .= '</div>';
+
+			// education degree pie chart
+			$str .= '<div class="container txt-center">';
+			$str .= '<h3>Tingkat Pendidikan Pekerja Industri Permainan Elektronik</h3>';
+			$str .= '<div class="row">';
+			$str .= '<div class="col-md-3"></div>';
+			$str .= '<div class="col-md-6"><div id="edu-degree"></div></div>';
+			$str .= '<div class="col-md-3"></div>';
+			$str .= '</div>';
+			$str .= '</div>';
+
 			return $str;
 		}
 

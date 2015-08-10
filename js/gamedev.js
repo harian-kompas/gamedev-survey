@@ -264,31 +264,102 @@ $(document).ready(function () {
 
 	}
 
-	if ($('#map').length) {
+});
 
-		$.getJSON('index.php?p=api', function (data) {
-			var map,
-				getDistinctYear = function () {
-					var a = [];
 
-					$.each(data, function (index, element) {
-						var year = element.studio.yearStart;
-						if (!a.contains(year)) {
-							a.push(year);
-						}
-						
-					});
+if ($('#map').length) {
 
-					return a.sort();
-				},
-				distinctYearStudio = getDistinctYear();
+	function drawCharts() {
+		drawDistributionMap();
+		drawAcademicChart();
+
+	}
+
+	function drawAcademicChart() {
+		$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
+			// console.log(data);
+			// create academic degree pie chart
+			var personnelsDegrees = data.summaries.personnels.degree,
+				arrDataAcademicDegree = [
+					['Pendidikan', 'Pekerja']
+				],
+				dataAcademicDegree,
+				degreeChart = new google.visualization.PieChart(document.getElementById('edu-degree')),
+				degreeChartOptions = {
+					chartArea : {
+						height: '100%',
+						width: '100%'
+					},
+					is3D: true
+				};
+
+				$.each(personnelsDegrees, function(index, element) {
+					arrDataAcademicDegree.push([element.name, element.total]);
+				});
+
 			
-			console.log(distinctYearStudio);
 
-			function getMapNav(years) {
-				var navFrag = $(document.createDocumentFragment());
+			dataAcademicDegree = google.visualization.arrayToDataTable(arrDataAcademicDegree);
 
-				$.each(years, function(index, element) {
+			degreeChart.draw(dataAcademicDegree, degreeChartOptions);
+
+			// console.log(arrDataAcademicDegree);
+
+		});
+	}
+
+	function drawDistributionMap() {
+		$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
+
+			var distinctYears = data.summaries.distinctStudioStartYears;
+
+			function insertYearNavigation() {
+				var navFrag = $(document.createDocumentFragment()),
+					displayContent = function(year) {
+						var allContents = data.summaries.studioDistributionsPerYear,
+							selectedContents,
+							map = new google.visualization.Map(document.getElementById('map')),
+							mapData = [
+								['Lat', 'Long']
+							],
+							mapOptions,
+							googleMapData;
+
+						$.each(allContents, function(index, element) {
+							if (element.year === year) {
+								selectedContents = element.location
+							}
+						});
+
+						$.each(selectedContents, function(index, element) {
+							// console.log(element);
+							mapData.push([
+								parseFloat(element.lat),
+								parseFloat(element.lng)
+							]);
+						});
+
+						googleMapData = google.visualization.arrayToDataTable(mapData);
+						map.draw(googleMapData, mapOptions);
+
+						// console.log(mapData);
+					},
+					selectYear = function(e) {
+						e.preventDefault();
+						var btn = $(this),
+							items = $('.map-nav-links');
+						
+						$.each(items, function(index, element) {
+							if (btn.text() === $(element).text()) {
+								$(element).parent().addClass('active');
+								displayContent(parseInt(btn.text(), 10));
+							} else {
+								$(element).parent().removeClass('active');
+							}
+						});
+					};
+
+				$.each(distinctYears, function(index, element) {
 					var items = $('<li></li>'),
 						links = $('<a></a>'),
 						isActive = (index === 0) ? ' active' : '';
@@ -300,29 +371,20 @@ $(document).ready(function () {
 
 					items.append(links);
 					navFrag.append(items);
-
+					links.on('click', selectYear); 
 				});
 
 				$('#map-nav').append(navFrag);
+
+				displayContent(distinctYears[0]);
 			}
 
-			function mapInit() {
-				map = new google.maps.Map(document.getElementById('map'), {
-					center: {
-						lat: -0.789275, 
-						lng: 113.921327
-					},
-					zoom: 4
-				});
-			}
 
-			google.maps.event.addDomListener(window, 'load', mapInit);
-			getMapNav(distinctYearStudio);
+			insertYearNavigation();
 
 		});
-		
 	}
 
-});
-
-// data visualiations
+	google.load('visualization', '1', {packages:['corechart', 'map']});
+	google.setOnLoadCallback(drawCharts);
+}
