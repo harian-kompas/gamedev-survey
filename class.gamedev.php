@@ -305,7 +305,7 @@
 					$productData = explode('|', $rawProducts);
 					$products[] = array(
 						'name' => $productData[0],
-						'year' => $productData[1],
+						'year' => (int)$productData[1],
 						'platform' => $productData[2]
 					);
 				}
@@ -402,16 +402,8 @@
 				}
 
 
-				// foreach ($strDetails as $strDetail) {
-				// 	$locationData = $strDetail['studio']['location'];
-				// 	print_r($locationData);
-				// }
-				
-				
-
-
 				// get distinct game year
-
+				// $queryDistinctGameYears = 
 
 
 
@@ -419,7 +411,7 @@
 					'summaries' => array(
 						'distinctStudioStartYears' => $distinctStudioStartYears,
 						'studioDistributionsPerYear' => $studioDistributionsPerYear,
-						'distinctGameYears' => null,
+						// 'distinctGameYears' => null,
 						'personnels' => array(
 							'total' => $studioPersonnelsNumber,
 							'degree' => array(
@@ -497,6 +489,16 @@
 			$str .= '<div class="row">';
 			$str .= '<div class="col-md-3"></div>';
 			$str .= '<div class="col-md-6"><div id="edu-degree"></div></div>';
+			$str .= '<div class="col-md-3"></div>';
+			$str .= '</div>';
+			$str .= '</div>';
+
+			// published games per year
+			$str .= '<div class="container txt-center">';
+			$str .= '<h3>Permainan Elektronik Terbit Per Tahun</h3>';
+			$str .= '<div class="row">';
+			$str .= '<div class="col-md-3"></div>';
+			$str .= '<div class="col-md-6"><div id="game-publications"></div></div>';
 			$str .= '<div class="col-md-3"></div>';
 			$str .= '</div>';
 			$str .= '</div>';

@@ -3,6 +3,8 @@
 
 $(document).ready(function () {
 
+	console.info('We meet again, at last. The circle is now complete. Interested in having fun with the dark side of data visualization? Join me at https://id.linkedin.com/in/yudhawijaya');
+
 	Array.prototype.contains = function (a) {
 		var len = this.length,
 			i;
