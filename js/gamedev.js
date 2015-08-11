@@ -327,7 +327,10 @@ if ($('#map').length) {
 							mapData = [
 								['Lat', 'Long']
 							],
-							mapOptions,
+							mapOptions = {
+								mapType : 'normal',
+								zoomLevel: 5
+							},
 							googleMapData;
 
 						$.each(allContents, function(index, element) {
@@ -455,7 +458,7 @@ if ($('#map').length) {
 			gamesChart.draw(chartData, gamesChartOptions);
 
 			// console.log(gamesRaw);
-			console.log(gamesData);
+			// console.log(gamesData);
 			// console.log(currentYear);
 		});
 	}

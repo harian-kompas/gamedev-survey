@@ -478,7 +478,7 @@
 			// map
 
 			$str .= '<div class="container-fluid full-width txt-center">';
-			$str .= '<h3>Peta Persebaran Industri Berdasarkan Tahun</h3>';
+			$str .= '<h3>Persebaran Industri Baru Per Tahun</h3>';
 			$str .= '<ul id="map-nav" class="map-nav"></ul>';
 			$str .= '<div id="map" class="map-canvas"></div>';
 			$str .= '</div>';
