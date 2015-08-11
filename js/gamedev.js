@@ -3,7 +3,7 @@
 
 $(document).ready(function () {
 
-	console.info('We meet again, at last. The circle is now complete. Interested in having fun with the dark side of data visualization? Join me at https://id.linkedin.com/in/yudhawijaya');
+	console.info('We meet again, at last. The circle is now complete. Interested in having fun with the dark side of data visualization? Stalk me at https://id.linkedin.com/in/yudhawijaya');
 
 	Array.prototype.contains = function (a) {
 		var len = this.length,
@@ -271,9 +271,13 @@ $(document).ready(function () {
 
 if ($('#map').length) {
 
+	google.load('visualization', '1', {packages:['corechart', 'map']});
+	google.setOnLoadCallback(drawCharts);
+
 	function drawCharts() {
 		drawDistributionMap();
 		drawAcademicChart();
+		drawGamePerYearChart();
 	}
 
 	function drawAcademicChart() {
@@ -387,6 +391,74 @@ if ($('#map').length) {
 		});
 	}
 
-	google.load('visualization', '1', {packages:['corechart', 'map']});
-	google.setOnLoadCallback(drawCharts);
+	function drawGamePerYearChart() {
+		$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
+			
+			var contents = data.surveyResultDetails,
+				gamesRaw = [],
+				gamesRawLen,
+				today = new Date,
+				currentYear = today.getFullYear(),
+				startYear = 2000,
+				gamesData = [
+					['Tahun', 'Desktop', 'Mobile']
+				],
+				i,
+				j,
+				numDesktop,
+				numMobile;
+
+			$.each(contents, function(index, element) {
+				var products = element.studio.products;
+				$.each(products, function(id, el) {
+					gamesRaw.push(el);
+				})
+			});
+
+			gamesRawLen = gamesRaw.length;
+
+			for (i = startYear; i <= currentYear; i++) {
+				numDesktop = 0;
+				numMobile = 0;
+
+				for (j = 0; j < gamesRawLen; j++) {
+					if (gamesRaw[j].year === i) {
+						if (gamesRaw[j].platform === 'desktop') {
+							numDesktop++;
+						} else if (gamesRaw[j].platform === 'mobile') {
+							numMobile++;
+						}
+					}
+				}
+
+				if (numDesktop > 0 || numMobile > 0) {
+					gamesData.push(
+						[ i.toString(), numDesktop, numMobile ]
+					);
+				}
+
+				
+			}
+
+			var gamesChart = new google.visualization.ColumnChart(document.getElementById('game-publications')),
+				gamesChartOptions = {
+					chartArea : {
+						// height: '95%',
+						// width: '95%',
+						isStacked : false,
+						// bar : { groupWidth : '75%' },
+						legend: { position : 'right' }
+					}
+				},
+				chartData = google.visualization.arrayToDataTable(gamesData);
+
+			gamesChart.draw(chartData, gamesChartOptions);
+
+			// console.log(gamesRaw);
+			console.log(gamesData);
+			// console.log(currentYear);
+		});
+	}
+
+	
 }
