@@ -68,7 +68,7 @@ $(document).ready(function () {
 						fclFrag = $(document.createDocumentFragment()),
 						fcrFrag = $(document.createDocumentFragment());
 
-					for (i = 1; i <= 20; i++) {
+					for (i = 1; i <= 30; i++) {
 						var options = $('<option></option>');
 						options.attr('value', i);
 						options.text(i + ' orang');

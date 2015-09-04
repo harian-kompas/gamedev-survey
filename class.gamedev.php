@@ -658,7 +658,7 @@
 			$str .= '<label class="control-label" for="txt-studio-personnels">Anggota Tetap Tim</label>';
 			$str .= '<div id="team-members" class="row">';
 
-			for ($i=1; $i <= 20; $i++) {
+			for ($i=1; $i <= 30; $i++) {
 				$numPersonnels .= '<option value="'.$i.'">'.$i.' orang</option>';
 			}			
 			$str .= '<div class="col-md-6">';
