@@ -445,13 +445,15 @@ if ($('#map').length) {
 
 			var gamesChart = new google.visualization.ColumnChart(document.getElementById('game-publications')),
 				gamesChartOptions = {
-					chartArea : {
+					isStacked : true,
+					legend : { position: 'in' }
+					// chartArea : {
 						// height: '95%',
 						// width: '95%',
-						isStacked : false,
+						// isStacked : false,
 						// bar : { groupWidth : '75%' },
-						legend: { position : 'right' }
-					}
+						// legend: { position : 'right' }
+					// }
 				},
 				chartData = google.visualization.arrayToDataTable(gamesData);
 
