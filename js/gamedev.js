@@ -1,9 +1,12 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, maxerr: 50, regexp: true, browser: true, white: true */
-/*global $, google */
+/*global $, google, MarkerClusterer */
+
+google.load('visualization', '1', {packages:['corechart', 'map']});
+google.load('maps', '3', { other_params : 'sensor=false' });
 
 $(document).ready(function () {
 
-	console.info('We meet again, at last. The circle is now complete. Interested in having fun with the dark side of data visualization? Stalk me at https://id.linkedin.com/in/yudhawijaya');
+	console.info('We\'re currently not hiring. But, are you interested in having fun with the dark side of data visualization? Fork this project: https://github.com/harian-kompas/gamedev-survey');
 
 	Array.prototype.contains = function (a) {
 		var len = this.length,
@@ -18,9 +21,109 @@ $(document).ready(function () {
 		return false;
 	};
 
+	Array.prototype.distinctSingleDimension = function () {
+		var a = [],
+			i,
+			len = this.length;
+
+		for (i = 0; i < len; i++) {
+			if (a.indexOf(this[i]) < 0) {
+				a.push(this[i]);
+			}
+				
+		}
+
+		return a;
+
+	};
+
 	String.prototype.ucfirst = function () {
 		return this.charAt(0).toUpperCase() + this.slice(1);
 	};
+
+	// function drawDistributionMap() {
+	// 	$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
+
+	// 		var distinctYears = data.summaries.distinctStudioStartYears;
+				
+	// 		function insertYearNavigation() {
+	// 			var navFrag = $(document.createDocumentFragment()),
+	// 				displayContent = function(year) {
+	// 					var allContents = data.summaries.studioDistributionsPerYear,
+	// 						selectedContents = [],
+	// 						map = new google.visualization.Map(document.getElementById('map')),
+	// 						mapData = [
+	// 							['Lat', 'Long']
+	// 						],
+	// 						mapOptions = {
+	// 							mapType : 'normal',
+	// 							zoomLevel: 5
+	// 						},
+	// 						googleMapData;
+
+	// 					// console.log(allContents);
+
+	// 					$.each(allContents, function() {
+	// 						if (this.year <= year) {
+	// 							$.each(this.location, function () {
+	// 								selectedContents.push(this);
+	// 							});
+	// 						}
+	// 					});
+
+	// 					// console.log(selectedContents);
+
+	// 					$.each(selectedContents, function() {
+	// 						// console.log(element);
+	// 						mapData.push([
+	// 							parseFloat(this.lat),
+	// 							parseFloat(this.lng)
+	// 						]);
+	// 					});
+
+
+	// 					googleMapData = google.visualization.arrayToDataTable(mapData);
+	// 					map.draw(googleMapData, mapOptions);
+	// 					// console.log(mapData);
+	// 				},
+	// 				selectYear = function(e) {
+	// 					e.preventDefault();
+	// 					var btn = $(this),
+	// 						items = $('.map-nav-links');
+						
+	// 					$.each(items, function() {
+	// 						if (btn.text() === $(this).text()) {
+	// 							$(this).parent().addClass('active');
+	// 							displayContent(parseInt(btn.text(), 10));
+	// 						} else {
+	// 							$(this).parent().removeClass('active');
+	// 						}
+	// 					});
+	// 				};
+
+	// 			$.each(distinctYears, function(index, element) {
+	// 				var items = $('<li></li>'),
+	// 					links = $('<a></a>'),
+	// 					isActive = (index === 0) ? ' active' : '';
+
+	// 				items.addClass('map-nav-items' + isActive);
+	// 				links.text(element);
+	// 				links.addClass('map-nav-links');
+	// 				links.attr('href', '#');
+
+	// 				items.append(links);
+	// 				navFrag.append(items);
+	// 				links.on('click', selectYear); 
+	// 			});
+
+	// 			$('#map-nav').append(navFrag);
+	// 			displayContent(parseInt(distinctYears[0], 10));
+	// 		}
+
+	// 		insertYearNavigation();
+
+	// 	});
+	// }
 
 	if ($('#btn-add-personnels').length) {
 		$('#btn-add-personnels').click(function (e) {
@@ -66,10 +169,11 @@ $(document).ready(function () {
 				$.getJSON('index.php?p=api&sp=akademik', function (data) {
 					var i,
 						fclFrag = $(document.createDocumentFragment()),
-						fcrFrag = $(document.createDocumentFragment());
+						fcrFrag = $(document.createDocumentFragment()),
+						options;
 
 					for (i = 1; i <= 30; i++) {
-						var options = $('<option></option>');
+						options = $('<option></option>');
 						options.attr('value', i);
 						options.text(i + ' orang');
 						fclFrag.append(options);
@@ -77,11 +181,11 @@ $(document).ready(function () {
 
 					clFormControl.append(fclFrag);
 
-					$.each(data, function(index, element) {
-						var options = $('<option></option>');
-						options.attr('value', element.key);
-						options.text('lulus ' + element.value);
-						fcrFrag.append(options);
+					$.each(data, function() {
+						var opt = $('<option></option>');
+						opt.attr('value', this.key);
+						opt.text('lulus ' + this.value);
+						fcrFrag.append(opt);
 					});
 
 					crFormControl.append(fcrFrag);
@@ -127,7 +231,8 @@ $(document).ready(function () {
 					cpWrapper = $('<div></div>'),
 					caDelButton = $('<a></a>'),
 					platforms = ['desktop', 'mobile'],
-					i;
+					i,
+					options;
 
 				//set elements' attributes;
 				row.addClass('row');
@@ -148,7 +253,7 @@ $(document).ready(function () {
 				cyFormControl.attr('name', 'products[year][]');
 				// console.log(startYear);
 				for (i = startYear; i <= currentYear; i++) {
-					var options = $('<option></option>');
+					options = $('<option></option>');
 					options.attr('value', i);
 					options.text(i);
 					cyDocFrag.append(options);
@@ -159,16 +264,16 @@ $(document).ready(function () {
 				cpFormGroup.addClass('form-group');
 				cpWrapper.addClass('checkbox');
 
-				$.each(platforms, function(index, element) {
+				$.each(platforms, function() {
 					var labels = $('<label></label>'),
 						inputs = $('<input></input>');
 
 					labels.addClass('checkbox-inline');
 					inputs.attr('type', 'checkbox');
-					inputs.attr('value', element);
+					inputs.attr('value', this);
 					inputs.attr('name', 'products[platform][' + c + '][]');
 
-					labels.append(inputs).append(document.createTextNode(element.ucfirst()));
+					labels.append(inputs).append(document.createTextNode(this.ucfirst()));
 
 					cpDocFrag.append(labels);
 					
@@ -218,43 +323,42 @@ $(document).ready(function () {
 				product = $('#txt-studio-products').val().trim(),
 				publications = $('input[name^="publications"]'),
 				checkPubCounter = 0,
-				doValidate = false;
+				doValidate = true;
 
 			// validate user's inputs
 			if (doValidate) {
-				if (name === '') {
+				if (name !== '') {
+					$('#txt-studio-name').parent().removeClass('has-error');
+				} else {
 					$('#txt-studio-name').parent().addClass('has-error');
 					return;
-				} else {
-					$('#txt-studio-name').parent().removeClass('has-error');
 				}
 
-				if (location === '') {
+				if (location !== '') {
+					$('#txt-studio-location').parent().removeClass('has-error');
+				} else {
 					$('#txt-studio-location').parent().addClass('has-error');
 					return;
-				} else {
-					$('#txt-studio-location').parent().removeClass('has-error');
 				}
 
-				if (product === '') {
-					$('#txt-studio-products').parent().addClass('has-error');
-					return;
-				} else {
+				if (product !== '') {
 					$('#txt-studio-products').parent().removeClass('has-error');
+				} else {
+					$('#txt-studio-products').parent().addClass('has-error');
+					return;					
 				}
 
-				
-				$.each(publications, function(index, element) {
-					if (element.checked) {
+				$.each(publications, function() {
+					if ($(this).checked) {
 						checkPubCounter++;
 					}
 				});
 
-				if (checkPubCounter === 0) {
+				if (checkPubCounter > 0) {
+					$('input[name^="publications"]').parent().parent().removeClass('has-error');
+				} else {
 					$('input[name^="publications"]').parent().parent().addClass('has-error');
 					return;
-				} else {
-					$('input[name^="publications"]').parent().parent().removeClass('has-error');
 				}
 			}
 				
@@ -266,169 +370,354 @@ $(document).ready(function () {
 
 	}
 
-});
+	$.getJSON('index.php?p=api&t=' + Date.now(), function (data) {
+		var drawAcademicChart,
+			drawCharts,
+			drawDistributionMap,
+			drawGamePerYearChart,
+			drawStudioEmployeesSize;
 
-
-if ($('#map').length) {
-
-	google.load('visualization', '1', {packages:['corechart', 'map']});
-	google.setOnLoadCallback(drawCharts);
-
-	function drawCharts() {
-		drawDistributionMap();
-		drawAcademicChart();
-		drawGamePerYearChart();
-	}
-
-	function drawAcademicChart() {
-		$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
-			// console.log(data);
-			// create academic degree pie chart
-			var personnelsDegrees = data.summaries.personnels.degree,
-				arrDataAcademicDegree = [
+		drawAcademicChart = function () {
+			var arrDataAcademicDegree = [
 					['Pendidikan', 'Pekerja']
 				],
+				arrPersonnels = {
+					total : 0,
+					degree : []
+				},
 				dataAcademicDegree,
 				degreeChart = new google.visualization.PieChart(document.getElementById('edu-degree')),
 				degreeChartOptions = {
-					chartArea : {
-						height: '100%',
-						width: '100%'
-					},
-					is3D: true
+					is3D: true,
+					legend: { position: 'bottom' },
+					slices : {
+						0: { offset: 0.2 },
+						3: { offset: 0.4 }
+					}
 				};
-
-				$.each(personnelsDegrees, function(index, element) {
-					arrDataAcademicDegree.push([element.name, element.total]);
-				});
-
 			
+			// set container's width and height
+			$('#edu-degree').width( $('#edu-degree').width() ).height( Math.floor( (9/16) * $('#edu-degree').width() ) );
 
-			dataAcademicDegree = google.visualization.arrayToDataTable(arrDataAcademicDegree);
-
-			degreeChart.draw(dataAcademicDegree, degreeChartOptions);
-
-			// console.log(arrDataAcademicDegree);
-
-		});
-	}
-
-	function drawDistributionMap() {
-		$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
-
-			var distinctYears = data.summaries.distinctStudioStartYears;
-			
-			function insertYearNavigation() {
-				var navFrag = $(document.createDocumentFragment()),
-					displayContent = function(year) {
-						var allContents = data.summaries.studioDistributionsPerYear,
-							selectedContents,
-							map = new google.visualization.Map(document.getElementById('map')),
-							mapData = [
-								['Lat', 'Long']
-							],
-							mapOptions = {
-								mapType : 'normal',
-								zoomLevel: 5
-							},
-							googleMapData;
-
-						$.each(allContents, function(index, element) {
-
-							if (element.year === year) {
-								selectedContents = element.location
-							}
-						});
-
-						$.each(selectedContents, function(index, element) {
-							// console.log(element);
-							mapData.push([
-								parseFloat(element.lat),
-								parseFloat(element.lng)
-							]);
-						});
-
-						googleMapData = google.visualization.arrayToDataTable(mapData);
-						map.draw(googleMapData, mapOptions);
-
-						// console.log(mapData);
-					},
-					selectYear = function(e) {
-						e.preventDefault();
-						var btn = $(this),
-							items = $('.map-nav-links');
-						
-						$.each(items, function(index, element) {
-							if (btn.text() === $(element).text()) {
-								$(element).parent().addClass('active');
-								displayContent(parseInt(btn.text(), 10));
-							} else {
-								$(element).parent().removeClass('active');
-							}
-						});
-					};
-
-				$.each(distinctYears, function(index, element) {
-					var items = $('<li></li>'),
-						links = $('<a></a>'),
-						isActive = (index === 0) ? ' active' : '';
-
-					items.addClass('map-nav-items' + isActive);
-					links.text(element);
-					links.addClass('map-nav-links');
-					links.attr('href', '#');
-
-					items.append(links);
-					navFrag.append(items);
-					links.on('click', selectYear); 
-				});
-
-				$('#map-nav').append(navFrag);
-
-				displayContent(parseInt(distinctYears[0], 10));
-			}
-
-
-			insertYearNavigation();
-
-		});
-	}
-
-	function drawGamePerYearChart() {
-		$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
-			
-			var contents = data.surveyResultDetails,
-				gamesRaw = [],
-				gamesRawLen,
-				today = new Date,
-				currentYear = today.getFullYear(),
-				startYear = 2000,
-				gamesData = [
-					['Tahun', 'Desktop', 'Mobile']
-				],
-				i,
-				j,
-				numDesktop,
-				numMobile;
-
-			$.each(contents, function(index, element) {
-				var products = element.studio.products;
-				$.each(products, function(id, el) {
-					gamesRaw.push(el);
-				})
+			$.each(['SD', 'SMP', 'SMA/SMK', 'D-1', 'D-2', 'D-3', 'D-4', 'S-1', 'S-2', 'S-3'], function (index, value) {
+				var personnelDegree = {
+					name : value,
+					total : 0
+				};
+				arrPersonnels.degree.push(personnelDegree);
 			});
 
-			gamesRawLen = gamesRaw.length;
+			$.each(data, function () {
+				var element = this,
+					arrPersonelEdu = element.studio.personnels.education;
+
+				arrPersonnels.total += parseInt(element.studio.personnels.total, 10);
+
+				$.each(arrPersonelEdu, function () {
+					var degree = this.degree,
+						num = this.num;
+
+					$.each(arrPersonnels.degree, function () {
+						
+						if (degree === this.name) {
+							this.total += num;
+						}
+					});
+				});
+
+			});
+
+			$.each(arrPersonnels.degree, function () {
+				arrDataAcademicDegree.push([this.name, this.total]);
+			});
+
+			dataAcademicDegree = google.visualization.arrayToDataTable(arrDataAcademicDegree);
+			degreeChart.draw(dataAcademicDegree, degreeChartOptions);
+		};
+
+		drawDistributionMap = function () {
+			var distinctYears,
+				rawYears = [],
+				populateStudiosData = function (selectedYear, studios) {
+					var docFrag = $(document.createDocumentFragment()),
+						studiosLen = studios.length,
+						studiosChunked = [],
+						// tempStudios
+						chunk = 4,
+						i;
+
+					$('#studios-this-year').empty();
+					$('#studios-this-year').parent().find('h3').text('Studio yang Muncul pada Tahun ' + selectedYear);
+
+					// sort by studio name	
+					studios.sort(function (a, b) {
+						if (a.name < b.name) {
+							return -1;
+						}
+
+						if (a.name > b.name) {
+							return 1;
+						}
+
+						return 0;
+					});
+
+					for (i = 0; i < studiosLen; i += chunk) {
+						studiosChunked.push(studios.slice(i, i + chunk));
+					}
+
+					$.each(studiosChunked, function () {
+						var values = this,
+							row = $('<div></div>'),
+							rowFrag = $(document.createDocumentFragment());
+
+						$.each(values, function() {
+							var col = $('<div></div>'),
+								table = $('<table></table>'),
+								thead = $('<thead></thead>'),
+								theadTr = $('<tr></tr>'),
+								theadTh = $('<th></th>'),
+								tbody = $('<tbody></tbody>'),
+								trLocation = $('<tr></tr>'),
+								tdLocation1 = $('<td></td>'),
+								tdLocation2 = $('<td></td>'),
+								trProducts = $('<tr></tr>'),
+								tdProducts1 = $('<td></td>'),
+								tdProducts2 = $('<td></td>'),
+								productsStr = '',
+								productsRaw = this.products;
+
+							$.each(productsRaw, function () {
+								productsStr += this.name + ' (' + this.year + ', ' + this.platform + '); ';
+							});
+							
+							col.addClass('col-md-3');
+
+							table.addClass('table table-stripped');
+							theadTh.attr('colspan', 2);
+							theadTh.text(this.name);
+
+							theadTr.append(theadTh);
+							thead.append(theadTr);
+
+							tdLocation1.text('Lokasi');
+							tdLocation2.text(this.location.name);
+							trLocation.append(tdLocation1, tdLocation2);
+
+							tdProducts1.text('Produk');
+							tdProducts2.text(productsStr.trim().substring(0, productsStr.trim().length - 1));
+							trProducts.append(tdProducts1, tdProducts2);
+
+							tbody.append(trLocation, trProducts);
+
+							table.append(thead, tbody);
+							col.append(table);
+							rowFrag.append(col);
+						});
+
+						row.addClass('row');
+
+						row.append(rowFrag);
+						docFrag.append(row);
+						// console.log(this);
+					});
+
+					$('#studios-this-year').append(docFrag);
+
+					// $.each(studios, function () {
+					// 	// <div class="col-md-2"><table class="table table-stripped"><thead><tr><th colspan="2">Nama Strudio</th></tr></thead><tbody><tr><td>LOkasi</td><td>Kocing</td></tr></tbody></table></div>
+					// 	var cols = $('<div></div>'),
+					// 		table = $('<table></table>'),
+					// 		thead = $('<thead></thead>'),
+					// 		theadTr = $('<tr></tr>'),
+					// 		theadTh = $('<th></th>'),
+					// 		tbody = $('<tbody></tbody>'),
+					// 		trLocation = $('<tr></tr>'),
+					// 		tdLocation1 = $('<td></td>'),
+					// 		tdLocation2 = $('<td></td>'),
+					// 		trProducts = $('<tr></tr>'),
+					// 		tdProducts1 = $('<td></td>'),
+					// 		tdProducts2 = $('<td></td>'),
+					// 		productsStr = '',
+					// 		productsRaw = this.products;
+
+					// 	$.each(productsRaw, function (){
+					// 		productsStr += this.name + ' (' + this.year + ', ' + this.platform + '); ';
+					// 	});
+
+					// 	cols.addClass('col-md-3');
+					// 	table.addClass('table table-stripped');
+					// 	theadTh.attr('colspan', 2);
+					// 	theadTh.text(this.name);
+						
+					// 	tdLocation1.text('Lokasi');
+					// 	tdLocation2.text(this.location.name);
+					// 	trLocation.append(tdLocation1, tdLocation2);
+
+					// 	tdProducts1.text('Produk');
+					// 	tdProducts2.text(productsStr.trim());
+					// 	trProducts.append(tdProducts1, tdProducts2);
+
+					// 	theadTr.append(theadTh);
+					// 	thead.append(theadTr);
+					// 	tbody.append(trLocation, trProducts);
+					// 	table.append(thead, tbody);
+					// 	cols.append(table);
+
+					// 	docFrag.append(cols);
+					// });
+
+					// $('#studios-this-year').append(docFrag);
+
+					// console.log(studios);
+					// console.log(studiosChunked);
+				},
+				populateMap = function (selectedYear) {
+					var mapData = [],
+						indonesia = {
+							lat : -0.789275,
+							lng : 113.921327
+						},
+						map,
+						mapOptions,
+						marker,
+						markers = [],
+						mc,
+						mcOptions = {
+							gridSize: 30
+						},
+						customMapType = [{"featureType":"administrative","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"administrative.country","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"administrative.province","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#e3e3e3"}]},{"featureType":"landscape.natural","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"color":"#cccccc"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"transit.line","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.airport","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.airport","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#FFFFFF"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"off"}]}],
+						studiosData = [];
+
+					$.each(data, function () {
+						if (this.studio.yearStart <= selectedYear) {
+							mapData.push({
+								lat : this.studio.location.latitude,
+								lng : this.studio.location.longitude,
+								locationName : this.studio.location.name
+							});
+						}
+
+						if (this.studio.yearStart === selectedYear) {
+							studiosData.push(this.studio);
+						}
+					});
+
+					$('#map').empty();
+
+					mapOptions = {
+							center : indonesia,
+							disableDefaultUI : true,
+							styles : customMapType,
+							zoom : 5
+						};
+
+					map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+					$.each(mapData, function () {
+						marker = new google.maps.Marker({
+							position: { lat : this.lat , lng : this.lng },
+							map : map
+						});
+						markers.push(marker);
+					});
+
+					mc = new MarkerClusterer(map, markers, mcOptions);
+
+					populateStudiosData(selectedYear, studiosData);
+					// console.log(mapData);
+				},
+				populateNav = function(arrYears) {
+					var docFrag = $(document.createDocumentFragment()),
+						armNavLinks = function (obj) {
+							obj.on('click', function (e) {
+								e.preventDefault();
+								var btn = $(this);
+
+								$('.map-nav-links').each(function () {
+									if (btn.text() === $(this).text()) {
+										$(this).parent().addClass('active');
+									} else {
+										$(this).parent().removeClass('active');
+									}
+								});
+
+
+								populateMap(parseInt(btn.text(), 10));
+							});
+						};
+					$.each(arrYears, function (index, element) {
+						var items = $('<li></li>'),
+							links = $('<a></a>');
+
+						if (index === 0) {
+							items.addClass('map-nav-items active');
+						} else {
+							items.addClass('map-nav-items');
+						}
+							
+						links.addClass('map-nav-links').attr('href', '#').text(element);
+
+						items.append(links);
+						docFrag.append(items);
+						armNavLinks(links);
+					});
+
+					$('#map-nav').append(docFrag);
+				};
+
+			$.each(data, function() {
+				rawYears.push(this.studio.yearStart);
+			});
+
+			distinctYears = rawYears.sort().distinctSingleDimension();
+			populateNav(distinctYears);
+			populateMap(distinctYears[0]);
+		};
+
+		drawGamePerYearChart = function () {
+			var gamesData = [
+					['Tahun', 'Desktop', 'Mobile']
+				],
+				numDesktop,
+				numMobile,
+				rawGamesData = [],
+				rawGamesDataLen,
+				startYear = 2000,
+				today = new Date(),
+				currentYear = today.getFullYear(),
+				i,
+				j,
+				gamesChart = new google.visualization.ColumnChart(document.getElementById('game-publications')),
+				gamesChartData,
+				gamesChartOptions = {
+					legend: { position : 'in' },
+					isStacked : true
+				};
+
+			// set container's width and height
+			$('#game-publications').width( $('#game-publications').width() ).height( Math.floor( (9/16) * $('#game-publications').width()) );
+
+			$.each(data, function () {
+				var products = this.studio.products;
+
+				$.each(products, function () {
+					rawGamesData.push(this);
+				});
+				
+			});
+
+			rawGamesDataLen = rawGamesData.length;
 
 			for (i = startYear; i <= currentYear; i++) {
 				numDesktop = 0;
 				numMobile = 0;
 
-				for (j = 0; j < gamesRawLen; j++) {
-					if (gamesRaw[j].year === i) {
-						if (gamesRaw[j].platform === 'desktop') {
+				for (j = 0; j < rawGamesDataLen; j++) {
+					if (i === rawGamesData[j].year) {
+						if (rawGamesData[j].platform === 'desktop') {
 							numDesktop++;
-						} else if (gamesRaw[j].platform === 'mobile') {
+						} else if (rawGamesData[j].platform === 'mobile') {
 							numMobile++;
 						}
 					}
@@ -436,32 +725,101 @@ if ($('#map').length) {
 
 				if (numDesktop > 0 || numMobile > 0) {
 					gamesData.push(
-						[ i.toString(), numDesktop, numMobile ]
+						[i.toString(), numDesktop, numMobile]
 					);
 				}
 
-				
+					
+
 			}
 
-			var gamesChart = new google.visualization.ColumnChart(document.getElementById('game-publications')),
-				gamesChartOptions = {
-					chartArea : {
-						// height: '95%',
-						// width: '95%',
-						isStacked : false,
-						// bar : { groupWidth : '75%' },
-						legend: { position : 'right' }
+			gamesChartData = google.visualization.arrayToDataTable(gamesData);
+			gamesChart.draw(gamesChartData, gamesChartOptions);
+		};
+
+		drawStudioEmployeesSize = function () {
+			var arrEmployeesSizeData = [
+					['Kategori', 'Jumlah Studio']
+				],
+				arrSizes = [
+					{
+						min: 1,
+						max: 3
+					},
+					{
+						min: 4,
+						max: 7
+					},
+					{
+						min: 8,
+						max: 10
+					},
+					{
+						min: 11,
+						max: 20
+					},
+					{
+						min: 21,
+						max: 50
+					},
+					{
+						min: 51,
+						max: 9999999
 					}
-				},
-				chartData = google.visualization.arrayToDataTable(gamesData);
+				],
+				arrSizesLen = arrSizes.length,
+				dataLen = data.length,
+				i,
+				j,
+				min = 0,
+				max = 0,
+				numStudio,
+				strColumnCat,
+				dataNumStudios,
+				numStudiosChart = new google.visualization.PieChart(document.getElementById('num-studios')),
+				numStudiosChartOptions = {
+					is3D: true,
+					legend: { position: 'right' }
+				};
 
-			gamesChart.draw(chartData, gamesChartOptions);
+			for (i = 0; i < arrSizesLen; i++) {
+				min = arrSizes[i].min;
+				max = arrSizes[i].max;
+				numStudio = 0;
+				strColumnCat = (i === arrSizesLen - 1) ? '> 50 pekerja' : min + '-' + max + ' pekerja';
 
-			// console.log(gamesRaw);
-			// console.log(gamesData);
-			// console.log(currentYear);
-		});
-	}
+				for (j = 0; j < dataLen; j++) {
+					if (data[j].studio.personnels.total >= min && data[j].studio.personnels.total <= max) {
+						numStudio++;
+					}
+				}
+
+				if (numStudio > 0) {
+					arrEmployeesSizeData.push([strColumnCat, numStudio]);
+				}
+			}
+
+			$('#num-studios').width( $('#num-studios').width() ).height( Math.floor( (9/16) * $('#num-studios').width() ) );
+			dataNumStudios = google.visualization.arrayToDataTable(arrEmployeesSizeData);
+			numStudiosChart.draw(dataNumStudios, numStudiosChartOptions);
+		};
+
+		drawCharts = function () {
+			drawDistributionMap();
+			drawStudioEmployeesSize();
+			drawAcademicChart();
+			drawGamePerYearChart();
+		};
+
+		if ($('#map').length) {
+			google.setOnLoadCallback(drawCharts);
+		}
+	});
+
+		
+
+});
 
 	
-}
+
+

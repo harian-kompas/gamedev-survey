@@ -92,6 +92,7 @@
 			$str .= '<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>';
 			// $str .= '<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>';
 			$str .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+			$str .= '<script type="text/javascript" src="js/markerclusterer.js"></script>';
 			$str .= '<script type="text/javascript" src="js/gamedev.js"></script>';
 			$str .= '</body>';
 			$str .= '</html>';
@@ -469,27 +470,40 @@
 		}
 
 		private static function get_data_visualization_page() {
-			
 			// intro
 			$str = '<div class="container-fluid full-width txt-center">';
 			$str .= '<h1>Industri Permainan Elektronik di Indonesia</h1>';
 			$str .= '</div>';
 
 			// map
-
 			$str .= '<div class="container-fluid full-width txt-center">';
-			$str .= '<h3>Persebaran Industri Baru Per Tahun</h3>';
+			$str .= '<h3>Persebaran Industri dari Tahun ke Tahun</h3>';
 			$str .= '<ul id="map-nav" class="map-nav"></ul>';
 			$str .= '<div id="map" class="map-canvas"></div>';
+			$str .= '</div>';
+
+			$str .= '<div class="container-fluid">';
+			$str .= '<h3 class="txt-center"></h3>';
+			$str .= '<div id="studios-this-year"></div>';
+			$str .= '</div>';
+
+			// numbers of workers
+			$str .= '<div class="container txt-center">';
+			$str .= '<h3>Persentase Studio Berdasarkan Jumlah Pekerja</h3>';
+			$str .= '<div class="row">';
+			$str .= '<div class="col-md-2"></div>';
+			$str .= '<div class="col-md-8"><div id="num-studios"></div></div>';
+			$str .= '<div class="col-md-2"></div>';
+			$str .= '</div>';
 			$str .= '</div>';
 
 			// education degree pie chart
 			$str .= '<div class="container txt-center">';
 			$str .= '<h3>Tingkat Pendidikan Pekerja Industri Permainan Elektronik</h3>';
 			$str .= '<div class="row">';
-			$str .= '<div class="col-md-3"></div>';
-			$str .= '<div class="col-md-6"><div id="edu-degree"></div></div>';
-			$str .= '<div class="col-md-3"></div>';
+			$str .= '<div class="col-md-2"></div>';
+			$str .= '<div class="col-md-8"><div id="edu-degree"></div></div>';
+			$str .= '<div class="col-md-2"></div>';
 			$str .= '</div>';
 			$str .= '</div>';
 
@@ -497,9 +511,9 @@
 			$str .= '<div class="container txt-center">';
 			$str .= '<h3>Permainan Elektronik Terbit Per Tahun</h3>';
 			$str .= '<div class="row">';
-			$str .= '<div class="col-md-3"></div>';
-			$str .= '<div class="col-md-6"><div id="game-publications"></div></div>';
-			$str .= '<div class="col-md-3"></div>';
+			$str .= '<div class="col-md-2"></div>';
+			$str .= '<div class="col-md-8"><div id="game-publications"></div></div>';
+			$str .= '<div class="col-md-2"></div>';
 			$str .= '</div>';
 			$str .= '</div>';
 
