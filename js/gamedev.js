@@ -1,7 +1,7 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, maxerr: 50, regexp: true, browser: true, white: true */
 /*global $, google, MarkerClusterer */
 
-google.load('visualization', '1', {packages:['corechart', 'map']});
+google.load('visualization', '1', {packages:['corechart']});
 google.load('maps', '3', { other_params : 'sensor=false' });
 
 $(document).ready(function () {
@@ -40,90 +40,6 @@ $(document).ready(function () {
 	String.prototype.ucfirst = function () {
 		return this.charAt(0).toUpperCase() + this.slice(1);
 	};
-
-	// function drawDistributionMap() {
-	// 	$.getJSON('index.php?p=api&sp=curang&t=' + Date.now(), function (data) {
-
-	// 		var distinctYears = data.summaries.distinctStudioStartYears;
-				
-	// 		function insertYearNavigation() {
-	// 			var navFrag = $(document.createDocumentFragment()),
-	// 				displayContent = function(year) {
-	// 					var allContents = data.summaries.studioDistributionsPerYear,
-	// 						selectedContents = [],
-	// 						map = new google.visualization.Map(document.getElementById('map')),
-	// 						mapData = [
-	// 							['Lat', 'Long']
-	// 						],
-	// 						mapOptions = {
-	// 							mapType : 'normal',
-	// 							zoomLevel: 5
-	// 						},
-	// 						googleMapData;
-
-	// 					// console.log(allContents);
-
-	// 					$.each(allContents, function() {
-	// 						if (this.year <= year) {
-	// 							$.each(this.location, function () {
-	// 								selectedContents.push(this);
-	// 							});
-	// 						}
-	// 					});
-
-	// 					// console.log(selectedContents);
-
-	// 					$.each(selectedContents, function() {
-	// 						// console.log(element);
-	// 						mapData.push([
-	// 							parseFloat(this.lat),
-	// 							parseFloat(this.lng)
-	// 						]);
-	// 					});
-
-
-	// 					googleMapData = google.visualization.arrayToDataTable(mapData);
-	// 					map.draw(googleMapData, mapOptions);
-	// 					// console.log(mapData);
-	// 				},
-	// 				selectYear = function(e) {
-	// 					e.preventDefault();
-	// 					var btn = $(this),
-	// 						items = $('.map-nav-links');
-						
-	// 					$.each(items, function() {
-	// 						if (btn.text() === $(this).text()) {
-	// 							$(this).parent().addClass('active');
-	// 							displayContent(parseInt(btn.text(), 10));
-	// 						} else {
-	// 							$(this).parent().removeClass('active');
-	// 						}
-	// 					});
-	// 				};
-
-	// 			$.each(distinctYears, function(index, element) {
-	// 				var items = $('<li></li>'),
-	// 					links = $('<a></a>'),
-	// 					isActive = (index === 0) ? ' active' : '';
-
-	// 				items.addClass('map-nav-items' + isActive);
-	// 				links.text(element);
-	// 				links.addClass('map-nav-links');
-	// 				links.attr('href', '#');
-
-	// 				items.append(links);
-	// 				navFrag.append(items);
-	// 				links.on('click', selectYear); 
-	// 			});
-
-	// 			$('#map-nav').append(navFrag);
-	// 			displayContent(parseInt(distinctYears[0], 10));
-	// 		}
-
-	// 		insertYearNavigation();
-
-	// 	});
-	// }
 
 	if ($('#btn-add-personnels').length) {
 		$('#btn-add-personnels').click(function (e) {
@@ -523,54 +439,6 @@ $(document).ready(function () {
 					});
 
 					$('#studios-this-year').append(docFrag);
-
-					// $.each(studios, function () {
-					// 	// <div class="col-md-2"><table class="table table-stripped"><thead><tr><th colspan="2">Nama Strudio</th></tr></thead><tbody><tr><td>LOkasi</td><td>Kocing</td></tr></tbody></table></div>
-					// 	var cols = $('<div></div>'),
-					// 		table = $('<table></table>'),
-					// 		thead = $('<thead></thead>'),
-					// 		theadTr = $('<tr></tr>'),
-					// 		theadTh = $('<th></th>'),
-					// 		tbody = $('<tbody></tbody>'),
-					// 		trLocation = $('<tr></tr>'),
-					// 		tdLocation1 = $('<td></td>'),
-					// 		tdLocation2 = $('<td></td>'),
-					// 		trProducts = $('<tr></tr>'),
-					// 		tdProducts1 = $('<td></td>'),
-					// 		tdProducts2 = $('<td></td>'),
-					// 		productsStr = '',
-					// 		productsRaw = this.products;
-
-					// 	$.each(productsRaw, function (){
-					// 		productsStr += this.name + ' (' + this.year + ', ' + this.platform + '); ';
-					// 	});
-
-					// 	cols.addClass('col-md-3');
-					// 	table.addClass('table table-stripped');
-					// 	theadTh.attr('colspan', 2);
-					// 	theadTh.text(this.name);
-						
-					// 	tdLocation1.text('Lokasi');
-					// 	tdLocation2.text(this.location.name);
-					// 	trLocation.append(tdLocation1, tdLocation2);
-
-					// 	tdProducts1.text('Produk');
-					// 	tdProducts2.text(productsStr.trim());
-					// 	trProducts.append(tdProducts1, tdProducts2);
-
-					// 	theadTr.append(theadTh);
-					// 	thead.append(theadTr);
-					// 	tbody.append(trLocation, trProducts);
-					// 	table.append(thead, tbody);
-					// 	cols.append(table);
-
-					// 	docFrag.append(cols);
-					// });
-
-					// $('#studios-this-year').append(docFrag);
-
-					// console.log(studios);
-					// console.log(studiosChunked);
 				},
 				populateMap = function (selectedYear) {
 					var mapData = [],
@@ -819,7 +687,3 @@ $(document).ready(function () {
 		
 
 });
-
-	
-
-
