@@ -1,3 +1,707 @@
 extends ./layout.jade
 
 block content
+.jumbotron
+      .container
+        h1 Pemetaan Game Developer Indonesia oleh Harian Kompas
+        p
+          | Harian Kompas bermaksud mengulas kondisi terkini industri game nasional sehingga sangat membutuhkan bantuan dari teman-teman pengembang untuk bisa menggambarkan hal tersebut. Beberapa poin yang akan diulas seperti persebaran per wilayah, produk yang dihasilkan, dan gambaran dari angkatan kerja yang diserap.
+        p
+          | Besar harapan data ini bisa dinikmati teman-teman kembali menjadi artikel ataupun infografis yang lebih membantu di masa mendatang.
+        p Terima kasih atas bantuannya.
+        p
+          a(href='https://twitter.com/eldidito') Didit Putra
+    .container
+      .col-md-8
+        form#the-survey(action='index.php?p=processForm', method='post')
+          .form-group.required
+            label.control-label(for='txt-studio-name') Nama Studio
+            input#txt-studio-name.form-control(name='txt-studio-name', type='text', pattern='[a-zA-Z\s]{1,255}', placeholder='Nama studio Anda', maxlength='255')
+          .form-group
+            label.control-label(for='txt-studio-url') Situs Studio
+            input#txt-studio-url.form-control(name='txt-studio-url', type='text', placeholder='Alamat situs studio Anda', maxlength='255', value='http://')
+          .form-group.required
+            label.control-label(for='txt-studio-location') Lokasi Studio
+            select#txt-studio-location.form-control(name='txt-studio-location')
+              option(value='') Kota/kabupaten domisili
+              optgroup(label='Provinsi Aceh')
+                option(value='1332') Kabupaten Aceh Barat
+                option(value='1337') Kabupaten Aceh Barat Daya
+                option(value='1333') Kabupaten Aceh Besar
+                option(value='1341') Kabupaten Aceh Jaya
+                option(value='1328') Kabupaten Aceh Selatan
+                option(value='1327') Kabupaten Aceh Singkil
+                option(value='1339') Kabupaten Aceh Tamiang
+                option(value='1331') Kabupaten Aceh Tengah
+                option(value='1329') Kabupaten Aceh Tenggara
+                option(value='1330') Kabupaten Aceh Timur
+                option(value='1336') Kabupaten Aceh Utara
+                option(value='1342') Kabupaten Bener Meriah
+                option(value='1335') Kabupaten Bireuen
+                option(value='1338') Kabupaten Gayo Lues
+                option(value='1340') Kabupaten Nagan Raya
+                option(value='1334') Kabupaten Pidie
+                option(value='1343') Kabupaten Pidie Jaya
+                option(value='1326') Kabupaten Simeulue
+                option(value='1344') Kota Banda Aceh
+                option(value='1346') Kota Langsa
+                option(value='1347') Kota Lhokseumawe
+                option(value='1345') Kota Sabang
+                option(value='1348') Kota Subulussalam
+              optgroup(label='Provinsi Sumatera Utara')
+                option(value='1356') Kabupaten Asahan
+                option(value='1367') Kabupaten Batu Bara
+                option(value='1358') Kabupaten Dairi
+                option(value='1360') Kabupaten Deli Serdang
+                option(value='1363') Kabupaten Humbang Hasundutan
+                option(value='1359') Kabupaten Karo
+                option(value='1355') Kabupaten Labuhanbatu
+                option(value='1754') Kabupaten Labuhanbatu Selatan
+                option(value='1753') Kabupaten Labuhanbatu Utara
+                option(value='1361') Kabupaten Langkat
+                option(value='1350') Kabupaten Mandailing Natal
+                option(value='1349') Kabupaten Nias
+                option(value='1757') Kabupaten Nias Barat
+                option(value='1362') Kabupaten Nias Selatan
+                option(value='1756') Kabupaten Nias Utara
+                option(value='1369') Kabupaten Padang Lawas
+                option(value='1368') Kabupaten Padang Lawas Utara
+                option(value='1364') Kabupaten Pakpak Bharat
+                option(value='1365') Kabupaten Samosir
+                option(value='1366') Kabupaten Serdang Bedagai
+                option(value='1357') Kabupaten Simalungun
+                option(value='1351') Kabupaten Tapanuli Selatan
+                option(value='1352') Kabupaten Tapanuli Tengah
+                option(value='1353') Kabupaten Tapanuli Utara
+                option(value='1354') Kabupaten Toba Samosir
+                option(value='1375') Kota Binjai
+                option(value='1758') Kota Gunungsitoli
+                option(value='1374') Kota Medan
+                option(value='1376') Kota Padangsidimpuan
+                option(value='1372') Kota Pematang Siantar
+                option(value='1370') Kota Sibolga
+                option(value='1371') Kota Tanjung Balai
+                option(value='1373') Kota Tebing Tinggi
+              optgroup(label='Provinsi Sumatera Barat')
+                option(value='1383') Kabupaten Agam
+                option(value='1387') Kabupaten Dharmas Raya
+                option(value='1377') Kabupaten Kepulauan Mentawai
+                option(value='1384') Kabupaten Lima Puluh Kota
+                option(value='1382') Kabupaten Padang Pariaman
+                option(value='1385') Kabupaten Pasaman
+                option(value='1388') Kabupaten Pasaman Barat
+                option(value='1378') Kabupaten Pesisir Selatan
+                option(value='1380') Kabupaten Sijunjung
+                option(value='1379') Kabupaten Solok
+                option(value='1386') Kabupaten Solok Selatan
+                option(value='1381') Kabupaten Tanah Datar
+                option(value='1393') Kota Bukittinggi
+                option(value='1389') Kota Padang
+                option(value='1392') Kota Padang Panjang
+                option(value='1395') Kota Pariaman
+                option(value='1394') Kota Payakumbuh
+                option(value='1391') Kota Sawah Lunto
+                option(value='1390') Kota Solok
+              optgroup(label='Provinsi Riau')
+                option(value='1403') Kabupaten Bengkalis
+                option(value='1398') Kabupaten Indragiri Hilir
+                option(value='1397') Kabupaten Indragiri Hulu
+                option(value='1401') Kabupaten Kampar
+                option(value='1759') Kabupaten Kepulauan Meranti
+                option(value='1396') Kabupaten Kuantan Singingi
+                option(value='1399') Kabupaten Pelalawan
+                option(value='1404') Kabupaten Rokan Hilir
+                option(value='1402') Kabupaten Rokan Hulu
+                option(value='1400') Kabupaten S I A K
+                option(value='1406') Kota Dumai
+                option(value='1405') Kota Pekanbaru
+              optgroup(label='Provinsi Jambi')
+                option(value='1410') Kabupaten Batang Hari
+                option(value='925') Kabupaten Batanghari
+                option(value='1415') Kabupaten Bungo
+                option(value='926') Kabupaten Bungo
+                option(value='1407') Kabupaten Kerinci
+                option(value='927') Kabupaten Kerinci
+                option(value='1408') Kabupaten Merangin
+                option(value='928') Kabupaten Merangin
+                option(value='1411') Kabupaten Muaro Jambi
+                option(value='929') Kabupaten Muaro Jambi
+                option(value='1409') Kabupaten Sarolangun
+                option(value='930') Kabupaten Sarolangun
+                option(value='1413') Kabupaten Tanjung Jabung Barat
+                option(value='931') Kabupaten Tanjung Jabung Barat
+                option(value='1412') Kabupaten Tanjung Jabung Timur
+                option(value='932') Kabupaten Tanjung Jabung Timur
+                option(value='1414') Kabupaten Tebo
+                option(value='933') Kabupaten Tebo
+                option(value='1416') Kota Jambi
+                option(value='934') Kota Jambi
+                option(value='935') Kota Sungai Penuh
+                option(value='1760') Kota Sungai Penuh
+              optgroup(label='Provinsi Sumatera Selatan')
+                option(value='1423') Kabupaten Banyu Asin
+                option(value='1427') Kabupaten Empat Lawang
+                option(value='1420') Kabupaten Lahat
+                option(value='1419') Kabupaten Muara Enim
+                option(value='1422') Kabupaten Musi Banyuasin
+                option(value='1421') Kabupaten Musi Rawas
+                option(value='1426') Kabupaten Ogan Ilir
+                option(value='1418') Kabupaten Ogan Komering Ilir
+                option(value='1417') Kabupaten Ogan Komering Ulu
+                option(value='1424') Kabupaten Ogan Komering Ulu Selatan
+                option(value='1425') Kabupaten Ogan Komering Ulu Timur
+                option(value='1431') Kota Lubuklinggau
+                option(value='1430') Kota Pagar Alam
+                option(value='1428') Kota Palembang
+                option(value='1429') Kota Prabumulih
+              optgroup(label='Provinsi Bengkulu')
+                option(value='1432') Kabupaten Bengkulu Selatan
+                option(value='1761') Kabupaten Bengkulu Tengah
+                option(value='1434') Kabupaten Bengkulu Utara
+                option(value='1435') Kabupaten Kaur
+                option(value='1439') Kabupaten Kepahiang
+                option(value='1438') Kabupaten Lebong
+                option(value='1437') Kabupaten Mukomuko
+                option(value='1433') Kabupaten Rejang Lebong
+                option(value='1436') Kabupaten Seluma
+                option(value='1440') Kota Bengkulu
+              optgroup(label='Provinsi Lampung')
+                option(value='1441') Kabupaten Lampung Barat
+                option(value='1443') Kabupaten Lampung Selatan
+                option(value='1445') Kabupaten Lampung Tengah
+                option(value='1444') Kabupaten Lampung Timur
+                option(value='1446') Kabupaten Lampung Utara
+                option(value='1764') Kabupaten Mesuji
+                option(value='1449') Kabupaten Pesawaran
+                option(value='1763') Kabupaten Pringsewu
+                option(value='1442') Kabupaten Tanggamus
+                option(value='1448') Kabupaten Tulangbawang
+                option(value='1762') Kabupaten Tulangbawang Barat
+                option(value='1447') Kabupaten Way Kanan
+                option(value='1450') Kota Bandar Lampung
+                option(value='1451') Kota Metro
+              optgroup(label='Provinsi Kepulauan Bangka Belitung')
+                option(value='1452') Kabupaten Bangka
+                option(value='1454') Kabupaten Bangka Barat
+                option(value='1456') Kabupaten Bangka Selatan
+                option(value='1455') Kabupaten Bangka Tengah
+                option(value='1453') Kabupaten Belitung
+                option(value='1457') Kabupaten Belitung Timur
+                option(value='1458') Kota Pangkal Pinang
+              optgroup(label='Provinsi Kepulauan Riau')
+                option(value='1766')  Kabupaten Anambas
+                option(value='1460') Kabupaten Bintan
+                option(value='1459') Kabupaten Karimun
+                option(value='1462') Kabupaten Lingga
+                option(value='1765') Kabupaten Lingga
+                option(value='1461') Kabupaten Natuna
+                option(value='1463') Kota Batam
+                option(value='1464') Kota Tanjung Pinang
+              optgroup(label='Provinsi DKI Jakarta')
+                option(value='1465') Kabupaten Kepulauan Seribu
+                option(value='1469') Kota Jakarta Barat
+                option(value='1468') Kota Jakarta Pusat
+                option(value='1466') Kota Jakarta Selatan
+                option(value='1467') Kota Jakarta Timur
+                option(value='1470') Kota Jakarta Utara
+              optgroup(label='Provinsi Jawa Barat')
+                option(value='1474') Kabupaten Bandung
+                option(value='1487') Kabupaten Bandung Barat
+                option(value='1486') Kabupaten Bekasi
+                option(value='1471') Kabupaten Bogor
+                option(value='1477') Kabupaten Ciamis
+                option(value='1473') Kabupaten Cianjur
+                option(value='1479') Kabupaten Cirebon
+                option(value='1475') Kabupaten Garut
+                option(value='1482') Kabupaten Indramayu
+                option(value='1485') Kabupaten Karawang
+                option(value='1478') Kabupaten Kuningan
+                option(value='1480') Kabupaten Majalengka
+                option(value='1484') Kabupaten Purwakarta
+                option(value='1483') Kabupaten Subang
+                option(value='1472') Kabupaten Sukabumi
+                option(value='1481') Kabupaten Sumedang
+                option(value='1476') Kabupaten Tasikmalaya
+                option(value='1490') Kota Bandung
+                option(value='1496') Kota Banjar
+                option(value='1492') Kota Bekasi
+                option(value='1488') Kota Bogor
+                option(value='1494') Kota Cimahi
+                option(value='1491') Kota Cirebon
+                option(value='1493') Kota Depok
+                option(value='1489') Kota Sukabumi
+                option(value='1495') Kota Tasikmalaya
+              optgroup(label='Provinsi Jawa Tengah')
+                option(value='1500') Kabupaten Banjarnegara
+                option(value='1498') Kabupaten Banyumas
+                option(value='1521') Kabupaten Batang
+                option(value='1512') Kabupaten Blora
+                option(value='1505') Kabupaten Boyolali
+                option(value='1525') Kabupaten Brebes
+                option(value='1497') Kabupaten Cilacap
+                option(value='1517') Kabupaten Demak
+                option(value='1511') Kabupaten Grobogan
+                option(value='1516') Kabupaten Jepara
+                option(value='1509') Kabupaten Karanganyar
+                option(value='1501') Kabupaten Kebumen
+                option(value='1520') Kabupaten Kendal
+                option(value='1506') Kabupaten Klaten
+                option(value='1515') Kabupaten Kudus
+                option(value='1504') Kabupaten Magelang
+                option(value='1514') Kabupaten Pati
+                option(value='1522') Kabupaten Pekalongan
+                option(value='1523') Kabupaten Pemalang
+                option(value='1499') Kabupaten Purbalingga
+                option(value='1502') Kabupaten Purworejo
+                option(value='1513') Kabupaten Rembang
+                option(value='1518') Kabupaten Semarang
+                option(value='1510') Kabupaten Sragen
+                option(value='1507') Kabupaten Sukoharjo
+                option(value='1524') Kabupaten Tegal
+                option(value='1519') Kabupaten Temanggung
+                option(value='1508') Kabupaten Wonogiri
+                option(value='1503') Kabupaten Wonosobo
+                option(value='1526') Kota Magelang
+                option(value='1530') Kota Pekalongan
+                option(value='1528') Kota Salatiga
+                option(value='1529') Kota Semarang
+                option(value='1527') Kota Surakarta
+                option(value='1531') Kota Tegal
+              optgroup(label='Provinsi DI Yogyakarta')
+                option(value='1533') Kabupaten Bantul
+                option(value='1534') Kabupaten Gunung Kidul
+                option(value='1532') Kabupaten Kulon Progo
+                option(value='1767') Kabupaten Sleman
+                option(value='1536') Kota Yogyakarta
+              optgroup(label='Provinsi Jawa Timur')
+                option(value='828') Kabupaten Bangkalan
+                option(value='821') Kabupaten Banyuwangi
+                option(value='831') Kabupaten Blitar
+                option(value='843') Kabupaten Bojonegoro
+                option(value='830') Kabupaten Bondowoso
+                option(value='849') Kabupaten Gresik
+                option(value='837') Kabupaten Jember
+                option(value='850') Kabupaten Jombang
+                option(value='829') Kabupaten Kediri
+                option(value='845') Kabupaten Lamongan
+                option(value='842') Kabupaten Lumajang
+                option(value='823') Kabupaten Madiun
+                option(value='825') Kabupaten Magetan
+                option(value='836') Kabupaten Malang
+                option(value='848') Kabupaten Mojokerto
+                option(value='834') Kabupaten Nganjuk
+                option(value='827') Kabupaten Ngawi
+                option(value='826') Kabupaten Pacitan
+                option(value='840') Kabupaten Pamekasan
+                option(value='839') Kabupaten Pasuruan
+                option(value='824') Kabupaten Ponorogo
+                option(value='841') Kabupaten Probolinggo
+                option(value='847') Kabupaten Sampang
+                option(value='846') Kabupaten Sidoarjo
+                option(value='835') Kabupaten Situbondo
+                option(value='838') Kabupaten Sumenep
+                option(value='832') Kabupaten Trenggalek
+                option(value='844') Kabupaten Tuban
+                option(value='833') Kabupaten Tulungagung
+                option(value='856') Kota Batu
+                option(value='854') Kota Blitar
+                option(value='858') Kota Kediri
+                option(value='853') Kota Madiun
+                option(value='855') Kota Malang
+                option(value='851') Kota Mojokerto
+                option(value='857') Kota Pasuruan
+                option(value='859') Kota Probolinggo
+                option(value='852') Kota Surabaya
+              optgroup(label='Provinsi Banten')
+                option(value='1538') Kabupaten Lebak
+                option(value='1537') Kabupaten Pandeglang
+                option(value='1540') Kabupaten Serang
+                option(value='1539') Kabupaten Tangerang
+                option(value='1542') Kota Cilegon
+                option(value='1543') Kota Serang
+                option(value='1541') Kota Tangerang
+                option(value='1768') Kota Tangerang Selatan
+              optgroup(label='Provinsi Bali')
+                option(value='1546') Kabupaten Badung
+                option(value='1549') Kabupaten Bangli
+                option(value='1551') Kabupaten Buleleng
+                option(value='1547') Kabupaten Gianyar
+                option(value='1544') Kabupaten Jembrana
+                option(value='1550') Kabupaten Karang Asem
+                option(value='1548') Kabupaten Klungkung
+                option(value='1545') Kabupaten Tabanan
+                option(value='1552') Kota Denpasar
+              optgroup(label='Provinsi Nusa Tenggara Barat')
+                option(value='1558') Kabupaten Bima
+                option(value='1557') Kabupaten Dompu
+                option(value='1553') Kabupaten Lombok Barat
+                option(value='1554') Kabupaten Lombok Tengah
+                option(value='1555') Kabupaten Lombok Timur
+                option(value='1769') Kabupaten Lombok Utara
+                option(value='1556') Kabupaten Sumbawa
+                option(value='1559') Kabupaten Sumbawa Barat
+                option(value='1561') Kota Bima
+                option(value='1560') Kota Mataram
+              optgroup(label='Provinsi Nusa Tenggara Timur')
+                option(value='1568') Kabupaten Alor
+                option(value='1567') Kabupaten Belu
+                option(value='1572') Kabupaten Ende
+                option(value='1570') Kabupaten Flores Timur
+                option(value='1564') Kabupaten Kupang
+                option(value='1569') Kabupaten Lembata
+                option(value='1574') Kabupaten Manggarai
+                option(value='1576') Kabupaten Manggarai Barat
+                option(value='1580') Kabupaten Manggarai Timur
+                option(value='1579') Kabupaten Nagekeo
+                option(value='1573') Kabupaten Ngada
+                option(value='1575') Kabupaten Rote Ndao
+                option(value='1770') Kabupaten Sabu Raijua
+                option(value='1571') Kabupaten Sikka
+                option(value='1562') Kabupaten Sumba Barat
+                option(value='1578') Kabupaten Sumba Barat Daya
+                option(value='1577') Kabupaten Sumba Tengah
+                option(value='1563') Kabupaten Sumba Timur
+                option(value='1565') Kabupaten Timor Tengah Selatan
+                option(value='1566') Kabupaten Timor Tengah Utara
+                option(value='1581') Kota Kupang
+              optgroup(label='Provinsi Kalimantan Barat')
+                option(value='1583') Kabupaten Bengkayang
+                option(value='1589') Kabupaten Kapuas Hulu
+                option(value='1592') Kabupaten Kayong Utara
+                option(value='1587') Kabupaten Ketapang
+                option(value='1593') Kabupaten Kubu Raya
+                option(value='1584') Kabupaten Landak
+                option(value='1591') Kabupaten Melawi
+                option(value='1585') Kabupaten Pontianak
+                option(value='1582') Kabupaten Sambas
+                option(value='1586') Kabupaten Sanggau
+                option(value='1590') Kabupaten Sekadau
+                option(value='1588') Kabupaten Sintang
+                option(value='1594') Kota Pontianak
+                option(value='1595') Kota Singkawang
+              optgroup(label='Provinsi Kalimantan Tengah')
+                option(value='1599') Kabupaten Barito Selatan
+                option(value='1607') Kabupaten Barito Timur
+                option(value='1600') Kabupaten Barito Utara
+                option(value='1606') Kabupaten Gunung Mas
+                option(value='1598') Kabupaten Kapuas
+                option(value='1604') Kabupaten Katingan
+                option(value='1596') Kabupaten Kotawaringin Barat
+                option(value='1597') Kabupaten Kotawaringin Timur
+                option(value='1602') Kabupaten Lamandau
+                option(value='1608') Kabupaten Murung Raya
+                option(value='1605') Kabupaten Pulang Pisau
+                option(value='1603') Kabupaten Seruyan
+                option(value='1601') Kabupaten Sukamara
+                option(value='1609') Kota Palangka Raya
+              optgroup(label='Provinsi Kalimantan Selatan')
+                option(value='1620') Kabupaten Balangan
+                option(value='1612') Kabupaten Banjar
+                option(value='1613') Kabupaten Barito Kuala
+                option(value='1615') Kabupaten Hulu Sungai Selatan
+                option(value='1616') Kabupaten Hulu Sungai Tengah
+                option(value='1617') Kabupaten Hulu Sungai Utara
+                option(value='1611') Kabupaten Kota Baru
+                option(value='1618') Kabupaten Tabalong
+                option(value='1619') Kabupaten Tanah Bumbu
+                option(value='1610') Kabupaten Tanah Laut
+                option(value='1614') Kabupaten Tapin
+                option(value='1622') Kota Banjar Baru
+                option(value='1621') Kota Banjarmasin
+              optgroup(label='Provinsi Kalimantan Timur')
+                option(value='1627') Kabupaten Berau
+                option(value='1629') Kabupaten Bulungan
+                option(value='1624') Kabupaten Kutai Barat
+                option(value='1625') Kabupaten Kutai Kartanegara
+                option(value='1626') Kabupaten Kutai Timur
+                option(value='1628') Kabupaten Malinau
+                option(value='1630') Kabupaten Nunukan
+                option(value='1623') Kabupaten Paser
+                option(value='1631') Kabupaten Penajam Paser Utara
+                option(value='1632') Kabupaten Tana Tidung
+                option(value='1633') Kota Balikpapan
+                option(value='1636') Kota Bontang
+                option(value='1634') Kota Samarinda
+                option(value='1635') Kota Tarakan
+              optgroup(label='Provinsi Sulawesi Utara')
+                option(value='1637') Kabupaten Bolaang Mongondow
+                option(value='1643') Kabupaten Bolaang Mongondow Utara
+                option(value='1772') Kabupaten Bolang Mongondow Selatan
+                option(value='1771') Kabupaten Bolang Mongondow Timur
+                option(value='1639') Kabupaten Kepulauan Sangihe
+                option(value='1640') Kabupaten Kepulauan Talaud
+                option(value='1638') Kabupaten Minahasa
+                option(value='1641') Kabupaten Minahasa Selatan
+                option(value='1645') Kabupaten Minahasa Tenggara
+                option(value='1642') Kabupaten Minahasa Utara
+                option(value='1644') Kabupaten Siau Tagulandang Biaro
+                option(value='1647') Kota Bitung
+                option(value='1649') Kota Kotamobagu
+                option(value='1646') Kota Manado
+                option(value='1648') Kota Tomohon
+              optgroup(label='Provinsi Sulawesi Tengah')
+                option(value='1651') Kabupaten Banggai
+                option(value='1650') Kabupaten Banggai Kepulauan
+                option(value='1656') Kabupaten Buol
+                option(value='1654') Kabupaten Donggala
+                option(value='1652') Kabupaten Morowali
+                option(value='1657') Kabupaten Parigi Moutong
+                option(value='1653') Kabupaten Poso
+                option(value='1773') Kabupaten Sigi
+                option(value='1658') Kabupaten Tojo Una-Una
+                option(value='1655') Kabupaten Toli-Toli
+                option(value='1659') Kota Palu
+              optgroup(label='Provinsi Sulawesi Selatan')
+                option(value='1662') Kabupaten Bantaeng
+                option(value='1669') Kabupaten Barru
+                option(value='1670') Kabupaten Bone
+                option(value='1661') Kabupaten Bulukumba
+                option(value='1675') Kabupaten Enrekang
+                option(value='1665') Kabupaten Gowa
+                option(value='1663') Kabupaten Jeneponto
+                option(value='1676') Kabupaten Luwu
+                option(value='1679') Kabupaten Luwu Timur
+                option(value='1678') Kabupaten Luwu Utara
+                option(value='1667') Kabupaten Maros
+                option(value='1668') Kabupaten Pangkajene Dan Kepulauan
+                option(value='1674') Kabupaten Pinrang
+                option(value='1660') Kabupaten Selayar
+                option(value='1673') Kabupaten Sidenreng Rappang
+                option(value='1666') Kabupaten Sinjai
+                option(value='1671') Kabupaten Soppeng
+                option(value='1664') Kabupaten Takalar
+                option(value='1677') Kabupaten Tana Toraja
+                option(value='1774') Kabupaten Toraja Utara
+                option(value='1672') Kabupaten Wajo
+                option(value='1680') Kota Makassar
+                option(value='1682') Kota Palopo
+                option(value='1681') Kota Pare-Pare
+              optgroup(label='Provinsi Sulawesi Tenggara')
+                option(value='1688') Kabupaten Bombana
+                option(value='1683') Kabupaten Buton
+                option(value='1691') Kabupaten Buton Utara
+                option(value='1686') Kabupaten Kolaka
+                option(value='1690') Kabupaten Kolaka Utara
+                option(value='1685') Kabupaten Konawe
+                option(value='1687') Kabupaten Konawe Selatan
+                option(value='1692') Kabupaten Konawe Utara
+                option(value='1684') Kabupaten Muna
+                option(value='1689') Kabupaten Wakatobi
+                option(value='1694') Kota Bau-Bau
+                option(value='1693') Kota Kendari
+              optgroup(label='Provinsi Gorontalo')
+                option(value='1695') Kabupaten Boalemo
+                option(value='1698') Kabupaten Bone Bolango
+                option(value='1696') Kabupaten Gorontalo
+                option(value='1699') Kabupaten Gorontalo Utara
+                option(value='1697') Kabupaten Pohuwato
+                option(value='1700') Kota Gorontalo
+              optgroup(label='Provinsi Sulawesi Barat')
+                option(value='1701') Kabupaten Majene
+                option(value='1703') Kabupaten Mamasa
+                option(value='1704') Kabupaten Mamuju
+                option(value='1705') Kabupaten Mamuju Utara
+                option(value='1702') Kabupaten Polewali Mandar
+              optgroup(label='Provinsi Maluku')
+                option(value='1776') Kabupaten Buru
+                option(value='1709') Kabupaten Buru Selatan
+                option(value='1710') Kabupaten Kepulauan Aru
+                option(value='1775') Kabupaten Maluku Barat Daya
+                option(value='1708') Kabupaten Maluku Tengah
+                option(value='1707') Kabupaten Maluku Tenggara
+                option(value='1706') Kabupaten Maluku Tenggara Barat
+                option(value='1711') Kabupaten Seram Bagian Barat
+                option(value='1712') Kabupaten Seram Bagian Timur
+                option(value='1713') Kota Ambon
+                option(value='1714') KotaTual
+              optgroup(label='Provinsi Maluku Utara')
+                option(value='1715') Kabupaten Halmahera Barat
+                option(value='1718') Kabupaten Halmahera Selatan
+                option(value='1716') Kabupaten Halmahera Tengah
+                option(value='1720') Kabupaten Halmahera Timur
+                option(value='1719') Kabupaten Halmahera Utara
+                option(value='1717') Kabupaten Kepulauan Sula
+                option(value='1778') Kabupaten Pulau Morota
+                option(value='1721') Kota Ternate
+                option(value='1722') Kota Tidore Kepulauan
+              optgroup(label='Provinsi Papua Barat')
+                option(value='1723') Kabupaten Fakfak
+                option(value='1724') Kabupaten Kaimana
+                option(value='1727') Kabupaten Manokwari
+                option(value='1790') Kabupaten Maybat
+                option(value='1730') Kabupaten Raja Ampat
+                option(value='1731') Kabupaten Sorong
+                option(value='1728') Kabupaten Sorong Selatan
+                option(value='1789') Kabupaten Tambrauw
+                option(value='1726') Kabupaten Teluk Bintuni
+                option(value='1725') Kabupaten Teluk Wondama
+                option(value='1729') Kota Sorong
+              optgroup(label='Provinsi Papua')
+                option(value='1743') Kabupaten Asmat
+                option(value='1737') Kabupaten Biak Numfor
+                option(value='1741') Kabupaten Boven Digoel
+                option(value='1798') Kabupaten Deiyai
+                option(value='1796') Kabupaten Dogiyai
+                option(value='1797') Kabupaten Intan Jaya
+                option(value='1734') Kabupaten Jayapura
+                option(value='1733') Kabupaten Jayawijaya
+                option(value='1748') Kabupaten Keerom
+                option(value='1736') Kabupaten Kepulauan Yapen
+                option(value='1793') Kabupaten Lanny Jaya
+                option(value='1751') Kabupaten Mamberamo Raya
+                option(value='1742') Kabupaten Mappi
+                option(value='1791') Kabupaten Memberamo Tengah
+                option(value='1732') Kabupaten Merauke
+                option(value='1740') Kabupaten Mimika
+                option(value='1735') Kabupaten Nabire
+                option(value='1794') Kabupaten Nduga
+                option(value='1738') Kabupaten Paniai
+                option(value='1745') Kabupaten Pegunungan Bintang
+                option(value='1795') Kabupaten Puncak
+                option(value='1739') Kabupaten Puncak Jaya
+                option(value='1747') Kabupaten Sarmi
+                option(value='1750') Kabupaten Supiori
+                option(value='1746') Kabupaten Tolikara
+                option(value='1749') Kabupaten Waropen
+                option(value='1744') Kabupaten Yahukimo
+                option(value='1792') Kabupaten Yalimo
+                option(value='1752') Kota Jayapura
+          .form-group.required
+            label.control-label(for='txt-studio-start') Tahun Beroperasi
+            select#txt-studio-start.form-control(name='txt-studio-start')
+              option(value='2000') 2000
+              option(value='2001') 2001
+              option(value='2002') 2002
+              option(value='2003') 2003
+              option(value='2004') 2004
+              option(value='2005') 2005
+              option(value='2006') 2006
+              option(value='2007') 2007
+              option(value='2008') 2008
+              option(value='2009') 2009
+              option(value='2010') 2010
+              option(value='2011') 2011
+              option(value='2012') 2012
+              option(value='2013') 2013
+              option(value='2014') 2014
+              option(value='2015') 2015
+          .form-group.required
+            label.control-label(for='txt-studio-personnels') Anggota Tetap Tim
+            #team-members.row
+              .col-md-6
+                .form-group
+                  select#txt-studio-personnels.form-control(name='personnels[number][]')
+                    option(value='1') 1 orang
+                    option(value='2') 2 orang
+                    option(value='3') 3 orang
+                    option(value='4') 4 orang
+                    option(value='5') 5 orang
+                    option(value='6') 6 orang
+                    option(value='7') 7 orang
+                    option(value='8') 8 orang
+                    option(value='9') 9 orang
+                    option(value='10') 10 orang
+                    option(value='11') 11 orang
+                    option(value='12') 12 orang
+                    option(value='13') 13 orang
+                    option(value='14') 14 orang
+                    option(value='15') 15 orang
+                    option(value='16') 16 orang
+                    option(value='17') 17 orang
+                    option(value='18') 18 orang
+                    option(value='19') 19 orang
+                    option(value='20') 20 orang
+                    option(value='21') 21 orang
+                    option(value='22') 22 orang
+                    option(value='23') 23 orang
+                    option(value='24') 24 orang
+                    option(value='25') 25 orang
+                    option(value='26') 26 orang
+                    option(value='27') 27 orang
+                    option(value='28') 28 orang
+                    option(value='29') 29 orang
+                    option(value='30') 30 orang
+              .col-md-6
+                .form-group
+                  select.form-control(name='personnels[edu][]')
+                    option(value='dasar') lulus SD
+                    option(value='menengahpertama') lulus SMP
+                    option(value='menengahatas') lulus SMA/SMK
+                    option(value='d1') lulus D-1
+                    option(value='d2') lulus D-2
+                    option(value='d3') lulus D-3
+                    option(value='d4') lulus D-4
+                    option(value='s1') lulus S-1
+                    option(value='s2') lulus S-2
+                    option(value='s3') lulus S-3
+            .row
+              .col-md-12.txt-right
+                a#btn-add-personnels(href='#') Tambah personel
+          .form-group.required
+            #products
+              .row
+                .col-md-4
+                  .form-group
+                    label.control-label(for='txt-studio-products') Karya
+                    input#txt-studio-products.form-control(type='text', placeholder='Judul karya', name='products[name][]', maxlength='255', value='')
+                .col-md-3
+                  .form-group
+                    label.control-label Tahun terbit
+                    select.form-control(name='products[year][]')
+                      option(value='2000') 2000
+                      option(value='2001') 2001
+                      option(value='2002') 2002
+                      option(value='2003') 2003
+                      option(value='2004') 2004
+                      option(value='2005') 2005
+                      option(value='2006') 2006
+                      option(value='2007') 2007
+                      option(value='2008') 2008
+                      option(value='2009') 2009
+                      option(value='2010') 2010
+                      option(value='2011') 2011
+                      option(value='2012') 2012
+                      option(value='2013') 2013
+                      option(value='2014') 2014
+                      option(value='2015') 2015
+                .col-md-5
+                  .form-group
+                    label.control-label Platform
+                    .checkbox
+                      label.checkbox-inline
+                        input(type='checkbox', name='products[platform][0][]', value='desktop')
+                        | Desktop
+                      label.checkbox-inline
+                        input(type='checkbox', name='products[platform][0][]', value='mobile')
+                        | Mobile
+            .row
+              .col-md-12.txt-right
+                a#btn-add-products(href='#') Tambah karya
+          .form-group.required
+            label.control-label(for='') Cara memperkenalkan karya
+            .checkbox
+              label
+                input(type='checkbox', value='offair', name='publications[]')
+                | Off air
+            .checkbox
+              label
+                input(type='checkbox', value='socialmedia', name='publications[]')
+                | Media sosial (Facebook, Twitter, dll)
+            .checkbox
+              label
+                input(type='checkbox', value='email', name='publications[]')
+                | E-mail
+            .checkbox
+              label
+                input(type='checkbox', value='publisher', name='publications[]')
+                | Penerbit (publisher)
+            .checkbox
+              label
+                input(type='checkbox', value='gameportal', name='publications[]')
+                | Portal game
+          .form-group
+            input#btn-submit.btn.btn-primary(type='submit', value='Kirim')
+          .form-group
+            p
+              | Sumber data nama daerah: 
+              a(href='http://data.go.id/dataset/daftar-nama-daerah', target='_blank') data.go.id
