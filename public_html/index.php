@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL ^ E_NOTICE);
+date_default_timezone_set('Asia/Jakarta');
+
 /**
  * Step 1: Require the Slim Framework
  *
@@ -22,7 +26,6 @@ require_once 'gamedev.class.php';
  * of setting names and values into the application constructor.
  */
 $app = new \Slim\Slim();
-$gamedev = new GameDev;
 
 /**
  * Step 3: Define the Slim application routes
@@ -35,16 +38,35 @@ $gamedev = new GameDev;
 
 // GET route
 $app->get('/', function () {
-    echo 'tes index';
+	$gamedev = new GameDev;
+    $gamedev->get_data_visualization_page();
 });
 
 $app->get('/api', function () {
-    echo 'tes api';
+	$gamedev = new GameDev;
+	$options = array(
+		'callback' => trim($_GET['callback'])
+	);
+
+    $gamedev->get_api_results($options);
 });
 
-$app->get('/api/results', function () {});
+$app->get('/api/hasil', function () {
+	$gamedev = new GameDev;
+	$options = array(
+		'callback' => trim($_GET['callback'])
+	);
 
-$app->get('/api/regions', function () {});
+    $gamedev->get_api_results($options);
+});
+
+$app->get('/api/isi', function () {
+	$gamedev = new GameDev;
+	$options = array(
+		'callback' => trim($_GET['callback'])
+	);
+	$gamedev->get_api_others($options);
+});
 
 
 // POST route
