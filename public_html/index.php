@@ -36,38 +36,38 @@ $app = new \Slim\Slim();
  * is an anonymous function.
  */
 
+
 // GET route
 $app->get('/', function () {
 	$gamedev = new GameDev;
     $gamedev->get_data_visualization_page();
 });
 
-$app->get('/api', function () {
+$app->get('/hasil', function () {
+    $gamedev = new GameDev;
+    $gamedev->get_data_visualization_page();
+});
+
+$app->get('/direktori', function () {
+    $gamedev = new GameDev;
+    $gamedev->get_studios_directory_page();
+});
+
+$app->get('/api(/:type)', function ($type = '') {
+    // print_r($type);
 	$gamedev = new GameDev;
 	$options = array(
 		'callback' => trim($_GET['callback'])
 	);
-
-    $gamedev->get_api_results($options);
+    if ($type === 'hasil') {
+        $gamedev->get_api_results($options);
+    } else if ($type === 'isi') {
+        $gamedev->get_api_others($options);
+    } else {
+        $gamedev->get_api_results($options);
+    }
+        
 });
-
-$app->get('/api/hasil', function () {
-	$gamedev = new GameDev;
-	$options = array(
-		'callback' => trim($_GET['callback'])
-	);
-
-    $gamedev->get_api_results($options);
-});
-
-$app->get('/api/isi', function () {
-	$gamedev = new GameDev;
-	$options = array(
-		'callback' => trim($_GET['callback'])
-	);
-	$gamedev->get_api_others($options);
-});
-
 
 // POST route
 $app->post('/post', function () {

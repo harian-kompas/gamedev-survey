@@ -64,12 +64,11 @@ body {
 
 .map-nav-items {
 	display: inline-block;
-	border: solid 1px transparent;
-	border-radius: 3px;
 	vertical-align: top;
+	margin-right: 5px;
 
-	&.active {
-		border: solid 1px #000;
+	&:last-child {
+		margin-right: 0;
 	}
 }
 

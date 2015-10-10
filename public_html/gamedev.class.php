@@ -36,14 +36,7 @@
 			}
 		}
 
-		public static function get_data_visualization_page() {
-			$str = GameDev::get_page_header('html');
-			$str .= GameDev::get_page_nav();
-			$str .= GameDev::get_page_footer('html');
-
-			echo $str;
-			unset($str);
-		}
+		
 
 		public static function get_api_others($options = array()) {
 			$acaDemicDegrees = array();
@@ -234,6 +227,69 @@
 			unset($str);
 		}
 
+		public static function get_data_visualization_page() {
+			$str = GameDev::get_page_header('html');
+			$str .= GameDev::get_page_nav('hasil');
+
+			// intro
+			$str .= '<div class="container-fluid full-width txt-center">';
+			$str .= '<h1>Industri Permainan Elektronik di Indonesia</h1>';
+			$str .= '</div>';
+
+			// map
+			$str .= '<div class="container-fluid full-width txt-center">';
+			$str .= '<h3>Persebaran Industri dari Tahun ke Tahun</h3>';
+			$str .= '<ul id="map-nav" class="map-nav"></ul>';
+			$str .= '<div id="map" class="map-canvas"></div>';
+			$str .= '</div>';
+
+			$str .= '<div class="container-fluid">';
+			$str .= '<h3 class="txt-center"></h3>';
+			$str .= '<div id="studios-this-year"></div>';
+			$str .= '</div>';
+
+
+			// data visualizations using charts
+			$str .= '<div class="container-fluid">';
+			$str .= '<div class="row">';
+
+			// numbers of workers
+			$str .= '<div class="col-lg-4 col-md-4">';
+			$str .= '<h3 class="txt-center">Persentase Ukuran Studio Berdasarkan Jumlah Pekerja</h3>';
+			$str .= '<div id="num-studios"></div>';
+			$str .= '</div>';
+
+			// education degree pie chart
+			$str .= '<div class="col-lg-4 col-md-4">';
+			$str .= '<h3 class="txt-center">Tingkat Pendidikan Pekerja Industri Permainan Elektronik</h3>';
+			$str .= '<div id="edu-degree"></div>';
+			$str .= '</div>';
+
+			// published games per year
+			$str .= '<div class="col-lg-4 col-md-4">';
+			$str .= '<h3 class="txt-center">Permainan Elektronik Terbit Per Tahun</h3>';
+			$str .= '<div id="game-publications"></div>';
+			$str .= '</div>';
+			
+			$str .= '</div>'; // .row
+			$str .= '</div>'; // .container-fluid
+
+			$str .= GameDev::get_page_footer('html');
+
+			echo $str;
+			unset($str);
+		}
+
+		public static function get_studios_directory_page() {
+			$str = GameDev::get_page_header('html');
+			$str .= GameDev::get_page_nav('direktori');
+			$str .= GameDev::get_page_footer('html');
+
+			echo $str;
+			unset($str);
+		}
+
+
 		private static function get_page_header($type = 'html') {
 			if ($type === 'html') {
 				$str = '<!DOCTYPE html>';
@@ -261,6 +317,15 @@
 
 		private static function get_page_footer($type = 'html') {
 			if ($type === 'html') {
+				$str = '<footer>';
+				$str .= '<div class="container-fluid footer">';
+				$str .= '<div class="col-md-12 txt-right">';
+				$str .= '<span class="footer-span">'.date('Y').' PT Kompas Media Nusantara</span>';
+				$str .= '<a class="link-ico-32" href="https://github.com/harian-kompas/gamedev-survey" target="_blank" title="Hayuk berkontribusi untuk repositori ini :D"><img src="img/GitHub-Mark-32px.png"></a>';
+				$str .= '</div>';
+				// $str .= 'Sumber data nama daerah: <a href="http://data.go.id/dataset/daftar-nama-daerah" target="_blank">data.go.id</a>';
+				$str .= '</div>';
+				$str .= '</footer>';
 				$str .= '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>';
 				$str .= '<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>';
 				$str .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
@@ -276,12 +341,12 @@
 
 		private static function get_page_nav($page = '') {
 			$navItems = '';
+			$baseUrl = ($_SERVER['HTTP_HOST'] === 'localhost') ? 'http://localhost/gamedev/public_html' : 'http://id.infografik.print.kompas.com/gamedev';
 			// print_r();
 			foreach (GameDev::$arrNav as $value) {
 				$isActive = ($page === strtolower($value)) ? ' class="active"' : '';
-				$target = (strtolower($value) === 'api') ? '_blank' : '_self';
 
-				$navItems .= '<li'.$isActive.'><a href="http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].strtolower($value).'" target="'.$target.'">'.$value.'</a></li>';
+				$navItems .= '<li'.$isActive.'><a href="'.$baseUrl.'/'.strtolower($value).'" target="'.$target.'">'.$value.'</a></li>';
 			}
 
 			$str = '<nav class="navbar navbar-inverse navbar-fixed-top">';
