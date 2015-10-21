@@ -49,6 +49,7 @@ body {
   display: inline-block;
   vertical-align: top;
   list-style-type: none;
+  padding: 0;
 }
 
 .map-nav-items {
@@ -63,7 +64,7 @@ body {
 
 .map-nav-links {
   display: block;
-  padding: 5px 8px;
+  padding: 0;
 }
 
 .txt-center {

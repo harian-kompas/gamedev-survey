@@ -48,9 +48,9 @@ $app->get('/hasil', function () {
     $gamedev->get_data_visualization_page();
 });
 
-$app->get('/direktori', function () {
+$app->get('/direktori(/:alfabet)', function ($alphabet = 'a') {
     $gamedev = new GameDev;
-    $gamedev->get_studios_directory_page();
+    $gamedev->get_studios_directory_page($alphabet);
 });
 
 $app->get('/api(/:type)', function ($type = '') {

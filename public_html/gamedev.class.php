@@ -1,6 +1,6 @@
 <?php
 	class GameDev {
-		static $pdo, $arrNav, $arrAcademics, $arrPublications;
+		static $pdo, $arrNav, $arrAcademics, $arrPublications, $baseUrl;
 
 		public function __construct() {
 			try {
@@ -30,6 +30,8 @@
 					'publisher' => 'Penerbit (publisher)',
 					'gameportal' => 'Portal game'
 				);
+
+				GameDev::$baseUrl = ($_SERVER['HTTP_HOST'] === 'localhost') ? 'http://localhost/gamedev/public_html' : 'http://id.infografik.print.kompas.com/gamedev';
 
 			} catch(PDOException $e) {
 				echo $e->getMessage();
@@ -280,9 +282,40 @@
 			unset($str);
 		}
 
-		public static function get_studios_directory_page() {
+		public static function get_studios_directory_page($alphabet = 'a') {
+			$alphas = range('a', 'z');
+			$navItems = '';
+			
+			foreach ($alphas as $key => $value) {
+				$navItems .= ($value === $alphabet) ? '<li class="map-nav-items btn btn-default active">' : '<li class="map-nav-items btn btn-default">';
+				$navItems .= '<a class="map-nav-links" href="'.GameDev::$baseUrl.'/direktori/'.$value.'">'.strtoupper($value).'</a>';
+				$navItems .= '</li>';
+			};
+
 			$str = GameDev::get_page_header('html');
 			$str .= GameDev::get_page_nav('direktori');
+
+			$str .= '<div class="container-fluid">';
+
+			$str .= '<div class="row">';
+			$str .= '<div class="col-lg-12 col-md-12 col-sm-12">';
+			$str .= '<h1>Direktori Pengembang Game Indonesia</h1>';
+			$str .= '</div>';
+			$str .= '</div>';
+
+			$str .= '<div class="row">';
+			$str .= '<div class="col-lg-12 col-md-12 col-sm-12">';
+			$str .= '<ul id="directory-nav" class="map-nav">'.$navItems.'</ul>';
+			$str .= '</div>';
+			$str .= '</div>';
+
+			$str .= '<div class="row">';
+
+			$str .= '</div>';
+
+			$str .= '</div>';
+
+
 			$str .= GameDev::get_page_footer('html');
 
 			echo $str;
@@ -305,7 +338,7 @@
 				$str .= '<meta name="format-detection" content="telephone=no">';
 				$str .= '<title>Pemetaan Game Developer Indonesia oleh Harian Kompas</title>';
 				$str .= '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">';
-				$str .= '<link rel="stylesheet" href="css/style.css">';
+				$str .= '<link rel="stylesheet" href="'.GameDev::$baseUrl.'/css/style.css">';
 				$str .= '</head>';
 				$str .= '<body>';
 			} else if ($type === 'json') {
@@ -321,7 +354,7 @@
 				$str .= '<div class="container-fluid footer">';
 				$str .= '<div class="col-md-12 txt-right">';
 				$str .= '<span class="footer-span">'.date('Y').' PT Kompas Media Nusantara</span>';
-				$str .= '<a class="link-ico-32" href="https://github.com/harian-kompas/gamedev-survey" target="_blank" title="Hayuk berkontribusi untuk repositori ini :D"><img src="img/GitHub-Mark-32px.png"></a>';
+				$str .= '<a class="link-ico-32" href="https://github.com/harian-kompas/gamedev-survey" target="_blank" title="Hayuk berkontribusi untuk repositori ini :D"><img src="'.GameDev::$baseUrl.'/img/GitHub-Mark-32px.png"></a>';
 				$str .= '</div>';
 				// $str .= 'Sumber data nama daerah: <a href="http://data.go.id/dataset/daftar-nama-daerah" target="_blank">data.go.id</a>';
 				$str .= '</div>';
@@ -329,8 +362,8 @@
 				$str .= '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>';
 				$str .= '<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>';
 				$str .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-				$str .= '<script type="text/javascript" src="js/markerclusterer.js"></script>';
-				$str .= '<script type="text/javascript" src="js/gamedev.js"></script>';
+				$str .= '<script type="text/javascript" src="'.GameDev::$baseUrl.'/js/markerclusterer.js"></script>';
+				$str .= '<script type="text/javascript" src="'.GameDev::$baseUrl.'/js/gamedev.js"></script>';
 				$str .= '</body>';
 				$str .= '</html>';
 			}
@@ -341,12 +374,11 @@
 
 		private static function get_page_nav($page = '') {
 			$navItems = '';
-			$baseUrl = ($_SERVER['HTTP_HOST'] === 'localhost') ? 'http://localhost/gamedev/public_html' : 'http://id.infografik.print.kompas.com/gamedev';
 			// print_r();
 			foreach (GameDev::$arrNav as $value) {
 				$isActive = ($page === strtolower($value)) ? ' class="active"' : '';
 
-				$navItems .= '<li'.$isActive.'><a href="'.$baseUrl.'/'.strtolower($value).'" target="'.$target.'">'.$value.'</a></li>';
+				$navItems .= '<li'.$isActive.'><a href="'.GameDev::$baseUrl.'/'.strtolower($value).'" target="'.$target.'">'.$value.'</a></li>';
 			}
 
 			$str = '<nav class="navbar navbar-inverse navbar-fixed-top">';
@@ -358,7 +390,7 @@
 			$str .= '<span class="icon-bar"></span>';
 			$str .= '<span class="icon-bar"></span>';
 			$str .= '</button>';
-			$str .= '<a class="navbar-brand" href="#">Pemetaan Game Developer</a>';
+			$str .= '<a class="navbar-brand" href="'.GameDev::$baseUrl.'/">Pemetaan Game Developer</a>';
 			$str .= '</div>';
 
 			$str .= '<div id="navbar" class="navbar-collapse collapse">';
