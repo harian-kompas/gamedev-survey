@@ -240,9 +240,9 @@
 
 			// map
 			$str .= '<div class="container-fluid full-width txt-center">';
-			$str .= '<h3>Persebaran Industri dari Tahun ke Tahun</h3>';
-			$str .= '<ul id="map-nav" class="map-nav"></ul>';
+			$str .= '<h3>Pertumbuhan Industri dari Tahun ke Tahun</h3>';
 			$str .= '<div id="map" class="map-canvas"></div>';
+			$str .= '<ul id="map-nav" class="map-nav"></ul>';
 			$str .= '</div>';
 
 			$str .= '<div class="container-fluid">';
@@ -285,35 +285,89 @@
 		public static function get_studios_directory_page($alphabet = 'a') {
 			$alphas = range('a', 'z');
 			$navItems = '';
+
+			if (!ctype_alpha($alphabet)) {
+				$alphabet = 'a';
+			}
 			
 			foreach ($alphas as $key => $value) {
-				$navItems .= ($value === $alphabet) ? '<li class="map-nav-items btn btn-default active">' : '<li class="map-nav-items btn btn-default">';
+				$navItems .= ($value === $alphabet) ? '<li class="map-nav-items active">' : '<li class="map-nav-items">';
 				$navItems .= '<a class="map-nav-links" href="'.GameDev::$baseUrl.'/direktori/'.$value.'">'.strtoupper($value).'</a>';
 				$navItems .= '</li>';
 			};
 
+			$strAlpha = $alphabet.'%';
+
+			$query = 'select survey_results.id, survey_results.studio_name, survey_results.studio_url, survey_results.products,
+					  location.name as location_name
+					  from survey_results
+					  left join location on location.nid = survey_results.studio_location
+					  where survey_results.studio_name like :strAlpha 
+					  order by survey_results.studio_name asc';
+			$stat = GameDev::$pdo->prepare($query);
+			$stat->bindParam(':strAlpha', $strAlpha);
+			$stat->execute();
+			$results = $stat->fetchAll(PDO::FETCH_ASSOC);
+
+			if (!empty($results)) {
+				$resultsChunked = array_chunk($results, 4);
+
+				$strDir = '';
+
+				foreach ($resultsChunked as $resultChunked) {
+					$strStudio = '';
+
+					foreach ($resultChunked as $value) {
+						$products = explode(';', $value['products']);
+						$strProducts = '';
+
+						foreach ($products as $productRaw) {
+							$product = explode('|', $productRaw);
+							$strProducts .= $product[0].' ('.$product[1].')<br>';
+						}
+						
+
+						$strStudio .= '<div class="col-lg-3 col-md-3 col-sm-6 directory-content-wrapper">';
+						$strStudio .= '<div class="col-sm-8">';
+						$strStudio .= '<span class="directory-label">Nama</span>';
+						$strStudio .= '<p class="directory-txt purple">'.$value['studio_name'].'</p>';
+						$strStudio .= !empty($value['studio_url']) ? '<span class="directory-label">URL</span>' : '';
+						$strStudio .= !empty($value['studio_url']) ? '<p class="directory-txt"><a href="'.$value['studio_url'].'" target="_blank">'.$value['studio_url'].'</a></p>' : '';
+						$strStudio .= '<span class="directory-label">Produk</span>';
+						$strStudio .= '<p class="directory-txt">'.substr($strProducts, 0, -4).'</p>';
+						$strStudio .= '</div>'; // .col-sm-8
+						$strStudio .= '</div>'; // .col-lg-3.col-md-3.col-sm-6.directory-content-wrapper
+					}
+
+					$strDir .='<div class="row">'.$strStudio.'</div>'; //.row
+				}
+			} else {
+				$strDir ='<div class="row"><div class="col-lg-12 col-md-12 col-sm-12"><p>Ciluuukk baaa</p></div></div>';
+			}
+
+				
+
 			$str = GameDev::get_page_header('html');
 			$str .= GameDev::get_page_nav('direktori');
 
+
+			$str .= '<div class="directory-nav">';
+			
 			$str .= '<div class="container-fluid">';
-
 			$str .= '<div class="row">';
-			$str .= '<div class="col-lg-12 col-md-12 col-sm-12">';
-			$str .= '<h1>Direktori Pengembang Game Indonesia</h1>';
+			$str .= '<div class="col-lg-12 col-md-12 col-sm-12"><h1 class="txt-white">Direktori Pengembang Game Indonesia</h1></div>';
 			$str .= '</div>';
+			$str .= '</div>'; // .container-fluid
+
+			$str .= '<div class="directory-nav-alphabet">';
+			$str .= '<ul id="directory-nav" class="map-nav-alphabet">'.$navItems.'</ul>';
 			$str .= '</div>';
 
-			$str .= '<div class="row">';
-			$str .= '<div class="col-lg-12 col-md-12 col-sm-12">';
-			$str .= '<ul id="directory-nav" class="map-nav">'.$navItems.'</ul>';
-			$str .= '</div>';
-			$str .= '</div>';
+			$str .= '</div>'; // .directory-nav
 
-			$str .= '<div class="row">';
+			$str .= '<div class="container-fluid directory-contents">'.$strDir.'</div>';
 
-			$str .= '</div>';
-
-			$str .= '</div>';
+			// $str .= '</div>';
 
 
 			$str .= GameDev::get_page_footer('html');
@@ -332,7 +386,7 @@
 				$str .= '<meta http-equiv="X-UA-Compatible" content="IE=edge">';
 				$str .= '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">';
 				$str .= '<meta name="keywords" content="Kompas Print">';
-				$str .= '<meta name="description" content="Harian Kompas bermaksud mengulas kondisi terkini industri game nasional sehingga sangat membutuhkan bantuan dari teman-teman pengembang untuk bisa menggambarkan hal tersebut. Beberapa poin yang akan diulas seperti persebaran per wilayah, produk yang dihasilkan, dan gambaran dari angkatan kerja yang diserap.">';
+				$str .= '<meta name="description" content="Pemetaan pengembang permainan elektronik Indonesia merupakan inisiatif dari harian Kompas untuk mendata populasi studio pengembang permainan elektronik interaktif di Tanah Air dengan masukan dari para pengembang.">';
 				$str .= '<meta name="author" content="Didit Putra Erlangga dan Yosef Yudha Wijaya">';
 				$str .= '<meta name="apple-mobile-web-app-capable" content="yes">';
 				$str .= '<meta name="format-detection" content="telephone=no">';
@@ -353,7 +407,7 @@
 				$str = '<footer>';
 				$str .= '<div class="container-fluid footer">';
 				$str .= '<div class="col-md-12 txt-right">';
-				$str .= '<span class="footer-span">'.date('Y').' PT Kompas Media Nusantara</span>';
+				$str .= '<span class="footer-span">'.date('Y').' PT Kompas Media Nusantara | <a href="http://id.infografik.print.kompas.com/gamedev/api" target="_blank">API</a> </span>';
 				$str .= '<a class="link-ico-32" href="https://github.com/harian-kompas/gamedev-survey" target="_blank" title="Hayuk berkontribusi untuk repositori ini :D"><img src="'.GameDev::$baseUrl.'/img/GitHub-Mark-32px.png"></a>';
 				$str .= '</div>';
 				// $str .= 'Sumber data nama daerah: <a href="http://data.go.id/dataset/daftar-nama-daerah" target="_blank">data.go.id</a>';

@@ -1,3 +1,11 @@
+@import "compass/css3";
+
+// variables
+$colour-black: #000;
+$colour-purple: #8e44ad;
+$colour-white: #fff;
+
+// le selectors
 body {
 	padding-top: 50px;
 }
@@ -9,6 +17,42 @@ body {
 	}
 }
 
+.directory-contents {
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+.directory-content-wrapper {
+	margin-bottom: 20px;
+}
+
+.directory-label {
+	color: #95a5a6;
+	display: block;
+	text-transform: uppercase;
+	font-size: 0.850em;
+
+}
+
+.directory-nav {
+	background-color: rgb(142,68,173);
+	@include filter-gradient(#8e44ad, #e570e7, horizontal);
+	@include background-image(linear-gradient(left,  rgb(142,68,173) 0%,rgb(247,247,118) 100%,rgb(229,112,231) 100%));
+
+}
+
+.directory-txt {
+	font-weight: 700;
+	margin-bottom: 10px;
+
+	&.purple {
+		color: $colour-purple;
+	}
+}
+
+// .directory-nav-alphabet {
+// 	font-size: 0;
+// }
 
 .footer {
 	padding: 15px 0;
@@ -54,28 +98,46 @@ body {
 .map-canvas {
 	width:100%;
 	height: 480px;
+	margin-bottom: 10px;
 }
 
-.map-nav {
+.map-nav-alphabet {
+	background-color: rgba($colour-black, 0.1);
 	display: inline-block;
 	vertical-align: top;
 	list-style-type: none;
 	padding: 0;
+	margin-bottom: 0;
 }
 
 .map-nav-items {
 	display: inline-block;
 	vertical-align: top;
-	margin-right: 5px;
+	font-size: 1em;
 
-	&:last-child {
-		margin-right: 0;
+	&:hover {
+		background-color: rgba($colour-black, 0.1);
+	}
+
+	&.active {
+		background-color: rgba($colour-black, 0.2);
 	}
 }
 
 .map-nav-links {
+	color: $colour-white;
 	display: block;
-	padding: 0;
+	font-size: 1.3em;
+	padding: 5px 12px;
+
+	&:hover {
+		color: $colour-white;
+		text-decoration: none;
+	}
+
+	&.black {
+		color: $colour-black;
+	}
 }
 
 .txt-center {
@@ -84,4 +146,8 @@ body {
 
 .txt-right {
 	text-align: right;
+}
+
+.txt-white {
+	color: $colour-white;
 }
