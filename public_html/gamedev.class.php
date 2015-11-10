@@ -9,7 +9,7 @@
 				GameDev::$pdo->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
 				GameDev::$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-				GameDev::$arrNav = array('Hasil', 'Direktori');
+				GameDev::$arrNav = array('Hasil', 'Direktori', 'Formulir');
 				GameDev::$arrAcademics = array(
 					'dasar' => 'SD',
 					'menengahpertama' => 'SMP',
@@ -38,15 +38,13 @@
 			}
 		}
 
-		
-
 		public static function get_api_others($options = array()) {
-			$acaDemicDegrees = array();
+			$academicDegrees = array();
 			$publicationMethods = array();
 			$provinces = array();
 
 			foreach (GameDev::$arrAcademics as $key => $value) {
-				$acaDemicDegrees[] = array(
+				$academicDegrees[] = array(
 					'key' => $key,
 					'value' => $value
 				);
@@ -60,7 +58,7 @@
 			}
 
 			$parentNid = 0;
-			$queryProvinces = 'select nid, name from location where parent_nid=:parent_nid order by serial asc';
+			$queryProvinces = 'select nid, name from gamedev__location where parent_nid=:parent_nid order by serial asc';
 			$statProvinces = GameDev::$pdo->prepare($queryProvinces);
 			$statProvinces->bindParam(':parent_nid', $parentNid);
 			$statProvinces->execute();
@@ -69,7 +67,7 @@
 			foreach ($resultProvinces as $resultProvince) {
 				$cities = array();
 				$provinceNid = $resultProvince['nid'];
-				$queryCities = 'select nid, name from location where parent_nid=:province_nid order by serial asc';
+				$queryCities = 'select nid, name from gamedev__location where parent_nid=:province_nid order by serial asc';
 				$statCities = GameDev::$pdo->prepare($queryCities);
 				$statCities->bindParam(':province_nid', $provinceNid);
 				$statCities->execute();
@@ -91,7 +89,7 @@
 			}
 
 			$strDetails = array(
-				'acaDemicDegrees' => $acaDemicDegrees,
+				'academicDegrees' => $academicDegrees,
 				'publicationMethods' => $publicationMethods,
 				'provinces' => $provinces
 			);
@@ -107,10 +105,10 @@
 
 		public static function get_api_results($options = array()) {
 			$strDetails = array();
-			$query = 'select survey_results.id, survey_results.datetime, survey_results.studio_name, survey_results.studio_url, survey_results.studio_location, survey_results.studio_start, survey_results.studio_personnels, survey_results.personnels_educations, survey_results.products, survey_results.publications,
-					  location.nid, location.name as location_name, location.latitude, location.longitude
-					  from survey_results
-					  left join location on survey_results.studio_location = location.nid
+			$query = 'select gamedev__survey_results.id, gamedev__survey_results.datetime, gamedev__survey_results.studio_name, gamedev__survey_results.studio_url, gamedev__survey_results.studio_location, gamedev__survey_results.studio_start, gamedev__survey_results.studio_personnels, gamedev__survey_results.personnels_educations, gamedev__survey_results.products, gamedev__survey_results.publications,
+					  gamedev__location.nid, gamedev__location.name as location_name, gamedev__location.latitude, gamedev__location.longitude
+					  from gamedev__survey_results
+					  left join gamedev__location on gamedev__survey_results.studio_location = gamedev__location.nid
 					  order by id asc';
 			$stat = GameDev::$pdo->prepare($query);
 			$stat->execute();
@@ -282,6 +280,136 @@
 			unset($str);
 		}
 
+		public static function get_entry_data_form($key = null) {
+			$str = GameDev::get_page_header('html');
+			$str .= GameDev::get_page_nav('formulir');
+
+			if (empty($key)) {
+				$str .= '<div class="container"><br>';
+				$str .= '<p>Sayangnya parameter kuncinya kosong. Anda bisa minta kunci untuk membuka formulir dengan salah satu metode berikut:</p>';
+
+				$str .= '<ol>';
+
+				$str .= '<li>';
+				$str .= '<form class="form-inline" action="'.GameDev::$baseUrl.'/formulir/kunci" method="post">';
+				$str .= '<div class="form-group">';
+				$str .= '<label class="sr-only">Email</label>';
+				$str .= '<p class="form-control-static">Isikan alamat e-mail Anda&nbsp;</p>';
+				$str .= '</div>';
+				$str .= '<div class="form-group">';
+				$str .= '<label for="txt-email" class="sr-only">E-mail</label>';
+				$str .= '<input type="text" class="form-control" name="txt-key-request-email" placeholder="g.freeman@halflife3.tld">';
+				$str .= '</div>&nbsp;';
+				$str .= '<button type="submit" class="btn btn-primary">Minta kunci</button>';
+				$str .= '</form>';
+				$str .= '</li>';
+
+				$str .= '<li><p>Ajari kami bikin game :D</p></li>';
+				$str .= '</ol>';
+
+				$str .= '<p>Jika Anda berada di halaman ini karena salah masuk, kami sangat menyarankan Anda untuk <a href="'.GameDev::$baseUrl.'/">menengok visualisasi data yang keren</a>.</p>';
+				$str .= '</div>';
+			} else {
+				$strLocations = '';
+
+				$queryProvinces = 'select nid, name from gamedev__location where parent_nid=0 order by serial asc';
+				$statProvinces = GameDev::$pdo->prepare($queryProvinces);
+				$statProvinces->execute();
+				$resultsProvinces = $statProvinces->fetchAll(PDO::FETCH_ASSOC);
+
+				foreach ($resultsProvinces as $value) {
+					$parentNid = $value['nid'];
+					$strCities = '';
+					
+
+
+					$queryCities = 'select nid, name from gamedev__location where parent_nid=:parent_nid order by name asc';
+					$statCities = GameDev::$pdo->prepare($queryCities);
+					$statCities->bindParam(':parent_nid', $parentNid);
+					$statCities->execute();
+					$resultsCities = $statCities->fetchAll(PDO::FETCH_ASSOC);
+
+
+					foreach ($resultsCities as $city) {
+						$strCities .= '<option value="'.$city['nid'].'">'.$city['name'].'</option>';
+					}
+
+					$yearEnd = (int)date('Y');
+					$yearStart = $yearEnd - 15;
+					$strYears = '';
+
+					for ($i = $yearStart; $i <= $yearEnd; $i++) {
+						$strYears .= '<option value="'.$i.'">'.$i.'</option>';
+					}
+
+					$strLocations .= '<optgroup label="'.$value['name'].'">'.$strCities.'</optgroup>';
+				}
+
+				$strNumPersonnels = '';
+				for ($i = 1; $i <= 30; $i++) {
+					$strNumPersonnels .= '<option value="'.$i.'">'.$i.'</option>';
+				}
+
+				$academicLevels = '';
+				foreach (GameDev::$arrAcademics as $key => $value) {
+					$academicLevels .= '<option value="'.$key.'">lulus '.$value.'</option>';
+				}
+
+				$pubs = '';
+				foreach (GameDev::$arrPublications as $key => $value) {
+					$pubs .= '<div class="checkbox"><label><input type="checkbox" value="'.$key.'" name="publications[]">'.$value.'</label></div>';
+				}
+
+
+				// jumbrotron
+				$str .= '<div class="jumbotron"><div class="container"><h1>Pemetaan Pengembang Permainan Elektronik Indonesia oleh Harian Kompas</h1><p>Harian Kompas bermaksud mengulas kondisi terkini industri game nasional sehingga sangat membutuhkan bantuan dari teman-teman pengembang untuk bisa menggambarkan hal tersebut. Beberapa poin yang akan diulas seperti persebaran per wilayah, produk yang dihasilkan, dan gambaran dari angkatan kerja yang diserap.</p><p>Besar harapan data ini bisa dinikmati teman-teman kembali menjadi artikel ataupun infografis yang lebih membantu di masa mendatang.</p><p>Terima kasih atas bantuannya.</p><p><a href="https://twitter.com/eldidito">Didit Putra</a></p></div></div>';
+
+				$str .= '<div class="container">';
+				$str .= '<div class="row">';
+				$str .= '<div class="col-md-8">';
+
+				// the form
+				$str .= '<form id="the-survey" action="'.GameDev::$baseUrl.'/formulir/post" method="post">';
+
+				// studio name
+				$str .= '<div class="form-group required"><label class="control-label" for="txt-studio-name">Nama Studio</label><input id="txt-studio-name" name="txt-studio-name" class="form-control" type="text" pattern="[a-zA-Z\s]{1,255}" placeholder="Nama studio Anda" maxlength="255"></div>';
+				// studio url
+				$str .= '<div class="form-group"><label class="control-label" for="txt-studio-url">Situs Studio</label><input id="txt-studio-url" name="txt-studio-url" class="form-control" type="text" placeholder="Alamat situs studio Anda" maxlength="255" value="http://"></div>';
+				//studio location
+				$str .= '<div class="form-group required">';
+				$str .= '<label class="control-label" for="txt-studio-location">Lokasi Studio</label>';
+				$str .= '<select class="form-control" id="txt-studio-location" name="txt-studio-location">';
+				$str .= '<option value="">Kota/kabupaten domisili</option>';
+				$str .= $strLocations;
+				$str .= '</select>';
+				$str .= '</div>';
+				// studio start year
+				$str .= '<div class="form-group required"><label class="control-label" for="txt-studio-start">Tahun Beroperasi</label><select class="form-control" id="txt-studio-start" name="txt-studio-start">'.$strYears.'</select></div>';
+				// studio workers
+				$str .= '<div class="form-group required"><label class="control-label" for="txt-studio-personnels">Anggota Tetap Tim</label><div id="team-members" class="row"><div class="col-xs-5"><div class="form-group"><select class="form-control" id="txt-studio-personnels" name="personnels[number][]">'.$strNumPersonnels.'</select></div></div><div class="col-xs-6"><div class="form-group"><select class="form-control" name="personnels[edu][]">'.$academicLevels.'</select></div></div></div><div class="row"><div class="col-md-12 txt-right"><a id="btn-add-personnels" href="#">Tambah personel</a></div></div></div>';
+				// studio products
+				$str .= '<div class="form-group required"><div id="products"><div class="row"><div class="col-md-4 col-xs-6"><div class="form-group"><label class="control-label" for="txt-studio-products">Karya</label><input id="txt-studio-products" class="form-control" type="text" placeholder="Judul karya" name="products[name][]" maxlength="255" value=""></div></div><div class="col-md-3 col-xs-6"><div class="form-group"><label class="control-label">Tahun terbit</label><select class="form-control" name="products[year][]">'.$strYears.'</select></div></div><div class="col-md-4 col-xs-11"><div class="form-group"><label class="control-label">Platform</label><div class="checkbox"><label class="checkbox-inline"><input type="checkbox" name="products[platform][0][]" value="desktop">Desktop</label><label class="checkbox-inline"><input type="checkbox" name="products[platform][0][]" value="mobile">Mobile</label></div></div></div></div></div><div class="row"><div class="col-md-12 txt-right"><a id="btn-add-products" href="#">Tambah karya</a></div></div></div>';
+				// products publication methods
+				$str .= '<div class="form-group required"><label for="" class="control-label">Cara memperkenalkan karya</label>'.$pubs.'</div>';
+
+				// finally, le button
+				$str .= '<div class="form-group"><input id="btn-submit" class="btn btn-primary" type="submit" value="Kirim"></div>';
+
+				$str .= '</form>';
+
+				$str .= '</div>'; // .col-md-8
+				$str .= '</div>'; // row
+				$str .= '</div>'; // .container
+			}
+
+			
+
+			$str .= GameDev::get_page_footer('html');
+
+			echo $str;
+			unset($str);
+		}
+
 		public static function get_studios_directory_page($alphabet = 'a') {
 			$alphas = range('a', 'z');
 			$navItems = '';
@@ -298,12 +426,12 @@
 
 			$strAlpha = $alphabet.'%';
 
-			$query = 'select survey_results.id, survey_results.studio_name, survey_results.studio_url, survey_results.products,
-					  location.name as location_name
-					  from survey_results
-					  left join location on location.nid = survey_results.studio_location
-					  where survey_results.studio_name like :strAlpha 
-					  order by survey_results.studio_name asc';
+			$query = 'select gamedev__survey_results.id, gamedev__survey_results.studio_name, gamedev__survey_results.studio_url, gamedev__survey_results.products,
+					  gamedev__location.name as location_name
+					  from gamedev__survey_results
+					  left join gamedev__location on gamedev__location.nid = gamedev__survey_results.studio_location
+					  where gamedev__survey_results.studio_name like :strAlpha 
+					  order by gamedev__survey_results.studio_name asc';
 			$stat = GameDev::$pdo->prepare($query);
 			$stat->bindParam(':strAlpha', $strAlpha);
 			$stat->execute();
@@ -376,6 +504,178 @@
 			unset($str);
 		}
 
+		public static function save_users_inputs() {
+			$now = date('Y-m-d H:i:s');
+			$studioName = GameDev::sanitize_inputs($_POST['txt-studio-name']);
+			$studioUrl = (!empty($_POST['txt-studio-url']) && $_POST['txt-studio-url'] !== 'http://') ? GameDev::sanitize_inputs($_POST['txt-studio-url']) : '';
+			$studioLocation = GameDev::sanitize_inputs($_POST['txt-studio-location']);
+			$studioStart = (int)($_POST['txt-studio-start']);
+			$rawPersonnels = $_POST['personnels'];
+			$rawProducts = $_POST['products'];
+			$rawPublications = $_POST['publications'];
+
+			$personnels = '';
+			$personnelCount = 0;
+			$products = '';
+			$publications = '';
+
+			foreach ($rawPersonnels['number'] as $key => $value) {
+				$personnels .= $value.'|'.$rawPersonnels['edu'][$key].';';
+				$personnelCount += (int)$value;
+			}
+
+			foreach ($rawProducts['name'] as $key => $value) {
+				$productName = isset($value) ? GameDev::sanitize_inputs($value) : '';
+				$productYear = isset($rawProducts['year'][$key]) ? (int)$rawProducts['year'][$key] : '';
+				$productPlatforms = isset($rawProducts['platform'][$key]) ? $rawProducts['platform'][$key] : array();
+				$platforms = '';
+
+				if (!empty($productName) && !empty($productYear) && !empty($productPlatforms)) {
+
+					foreach ($productPlatforms as $keyPlatform => $valuePlatform) {
+						$platforms .= $valuePlatform.',';
+					}
+
+					$products .= $productName.'|'.$productYear.'|'.substr($platforms, 0, -1).';';
+				}
+			}
+
+			if (!empty($rawPublications)) {
+				foreach ($rawPublications as $key => $value) {
+					$publications .= $value.';';
+				}
+			}
+				
+
+			$personnels = substr($personnels, 0, -1);
+			$products = substr($products, 0, -1);
+			$publications = substr($publications, 0, -1);
+
+			if (empty($studioName)) {
+				exit('Tiada nama studio');
+			}
+
+			if (empty($studioLocation)) {
+				exit('Tiada lokasi studio');
+			}
+
+			if (!is_numeric($studioStart) || $studioStart <= 0) {
+				exit('Tahun studio berdiri tak valid');
+			}
+
+			if (empty($personnels)) {
+				exit('Tiada anggota tim studio');
+			}
+
+			if (empty($products)) {
+				exit('Tiada produk. Aneh kan?');
+			}
+
+			if (empty($publications)) {
+				exit('Tiada publikasi produk');
+			}
+
+			//check if studio is already in database
+			$queryCheck = 'select count(id) as cc from gamedev__survey_results where studio_name=:studioName';
+			$statCheck = GameDev::$pdo->prepare($queryCheck);
+			$statCheck->bindParam(':studioName', $studioName, PDO::PARAM_STR);
+			$statCheck->execute();
+			$resultCheck = $statCheck->fetch(PDO::FETCH_ASSOC);
+			// print_r($resultCheck);
+			if ($resultCheck['cc'] > 0) {
+				exit('Studio '.$studioName.' sudah ada');
+			}
+
+
+			// $query = 'insert into survey_results 
+			// 		  (datetime, studio_name, studio_url, studio_location, studio_start, studio_personnels, personnels_educations, products, publications)
+			// 		  values 
+			// 		  (:now, :studioName, :studioUrl, :studioLocation, :studioStart, :personnelCount, :personnels, :products, :publications)';
+
+			// $stat = GameDev::$pdo->prepare($query);
+			// $stat->bindParam(':now', $now);
+			// $stat->bindParam(':studioName', $studioName);
+			// $stat->bindParam(':studioUrl', $studioUrl);
+			// $stat->bindParam(':studioLocation', $studioLocation);
+			// $stat->bindParam(':studioStart', $studioStart);
+			// $stat->bindParam(':personnelCount', $personnelCount);
+			// $stat->bindParam(':personnels', $personnels);
+			// $stat->bindParam(':products', $products);
+			// $stat->bindParam(':publications', $publications);
+			// $stat->execute();
+
+			header('Location: '.GameDev::$baseUrl);
+			exit;
+
+			print_r($studioName."\r\n");
+			print_r($studioUrl."\r\n");
+			print_r($studioLocation."\r\n");
+			print_r($rawPersonnels);
+			print_r($personnels."\r\n");
+			print_r($personnelCount."\r\n");
+			print_r($rawProducts);
+			print_r($products);
+			print_r($rawPublications);
+			print_r($publications);
+		}
+
+		public static function save_users_key_request() {
+			$emailRaw = trim($_POST['txt-key-request-email']);
+			$email = filter_var($emailRaw, FILTER_SANITIZE_EMAIL);
+
+			if (empty($email)) {
+				$strResponse = '<div class="bg-warning message-box">Alamat e-mail kosong. Kami memerlukan alamat e-mail Anda untuk memvalidasi data. <a href="'.GameDev::$baseUrl.'/formulir">Kembali</a></div>';
+			} else {
+				if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+					
+					// check if e-mail is already registered
+					$queryCheck = 'select count(id) as num from gamedev__keys where email=:email';
+					$statCheck = GameDev::$pdo->prepare($queryCheck);
+					$statCheck->bindParam(':email', $email);
+					$statCheck->execute();
+					$resultCheck = $statCheck->fetch(PDO::FETCH_ASSOC);
+
+					if ($resultCheck['num'] === 0) {
+						// e-mail is clear, save now
+						$dtNow = date('Y-m-d H:i:s');
+						$uniqueKey = md5($email.time());
+						$isActive = 1;
+						$querySave = 'insert into gamedev__keys (email, form_key, dt_request, is_active) values (:email, :form_key, :dt_request, :is_active)';
+						$statSave = GameDev::$pdo->prepare($querySave);
+						$statSave->bindParam(':email', $email);
+						$statSave->bindParam(':form_key', $uniqueKey);
+						$statSave->bindParam(':dt_request', $dtNow);
+						$statSave->bindParam(':is_active', $isActive);
+						$statSave->execute();
+
+						$strResponse = '<div class="bg-success message-box">Alamat e-mail Anda telah terdaftar. <a href="'.GameDev::$baseUrl.'/formulir/'.$uniqueKey.'">Lanjutkan ke formulir</a>.</div>';
+					} else {
+						$strResponse = '<div class="bg-warning message-box">Alamat e-mail Anda, '.$email.', sudah didaftarkan. Kami tak bisa melanjutkan pemrosesan permintaan Anda. <a href="'.GameDev::$baseUrl.'/formulir">Kembali</a>.</div>';
+					}
+
+					
+				} else {
+					$strResponse = '<div class="bg-warning message-box">Alamat e-mail Anda, '.$email.', tak valid. <a href="'.GameDev::$baseUrl.'/formulir">Mohon cek kembali</a>. Kami memerlukan alamat e-mail Anda untuk memvalidasi data.</div>';
+				}
+					
+			}
+
+			$str = GameDev::get_page_header('html');
+			$str .= GameDev::get_page_nav('formulir');
+			
+			$str .= '<div class="container">';
+			$str .= '<div class="row">';
+			$str .= '<div class="col-md-6 col-md-offset-3">';
+			$str .= $strResponse;
+			$str .= '</div>'; // .col-md-6.col-md-offset-3
+			$str .= '</div>'; // .row
+			$str .= '</div>'; // .container
+
+			$str .= GameDev::get_page_footer('html');
+
+			echo $str;
+			unset($str);
+		}
 
 		private static function get_page_header($type = 'html') {
 			if ($type === 'html') {
@@ -452,6 +752,16 @@
 			$str .= '</div>';
 			$str .= '</div>';
 			$str .= '</nav>';
+
+			return $str;
+		}
+
+		private static function sanitize_inputs($str) {
+			$str = trim($str);
+			$str = strip_tags($str);
+			if(get_magic_quotes_gpc()) {
+				$str = stripslashes($str);
+			}
 
 			return $str;
 		}

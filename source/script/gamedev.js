@@ -5,7 +5,8 @@ google.load('visualization', '1', {packages:['corechart']});
 google.load('maps', '3', { other_params : 'sensor=false' });
 
 $(document).ready(function () {
-
+	'use strict';
+	
 	console.info('We\'re currently not hiring. But, are you interested in having fun with the dark side of data visualization? Fork this project: https://github.com/harian-kompas/gamedev-survey');
 
 	var baseUrl = (window.location.host === 'localhost') ? 'http://localhost/gamedev/public_html' : 'http://id.infografik.print.kompas.com/gamedev';
@@ -45,80 +46,74 @@ $(document).ready(function () {
 
 	if ($('#btn-add-personnels').length) {
 		$('#btn-add-personnels').click(function (e) {
-			// prevent default action
 			e.preventDefault();
+			var colLeft = $('<div></div>'),
+				colRight = $('<div></div>'),
+				colAdmin = $('<div></div>'),
+				clFormGroup = $('<div></div>'),
+				clFormControl = $('<select></select>'),
+				crFormGroup = $('<div></div>'),
+				crFormControl = $('<select></select>'),
+				caDelButton = $('<a></a>');
 
-			if ($('#team-members').length) {
+			//set elements' attributes;
+			colLeft.addClass('col-xs-5');
+			colRight.addClass('col-xs-6');
+			colAdmin.addClass('col-xs-1');
+			clFormGroup.addClass('form-group');
+			clFormControl.addClass('form-control');
+			clFormControl.attr('name', 'personnels[number][]');
+			crFormGroup.addClass('form-group');
+			crFormControl.addClass('form-control');
+			crFormControl.attr('name', 'personnels[edu][]');
+			caDelButton.addClass('btn btn-danger');
+			caDelButton.text('X');
+
+			clFormGroup.append(clFormControl);
+			crFormGroup.append(crFormControl);
 				
-				// create elements
-				var colLeft = $('<div></div>'),
-					colRight = $('<div></div>'),
-					colAdmin = $('<div></div>'),
-					clFormGroup = $('<div></div>'),
-					clFormControl = $('<select></select>'),
-					crFormGroup = $('<div></div>'),
-					crFormControl = $('<select></select>'),
-					caDelButton = $('<a></a>');
+			colLeft.append(clFormGroup);
+			colRight.append(crFormGroup);
+			colAdmin.append(caDelButton);
 
-				//set elements' attributes;
-				colLeft.addClass('col-md-6');
-				colRight.addClass('col-md-5');
-				colAdmin.addClass('col-md-1');
-				clFormGroup.addClass('form-group');
-				clFormControl.addClass('form-control');
-				clFormControl.attr('name', 'personnels[number][]');
-				crFormGroup.addClass('form-group');
-				crFormControl.addClass('form-control');
-				crFormControl.attr('name', 'personnels[edu][]');
-				caDelButton.addClass('btn btn-danger');
-				caDelButton.text('X');
+			$('#team-members').append(colLeft, colRight, colAdmin);
 
-				clFormGroup.append(clFormControl);
-				crFormGroup.append(crFormControl);
-				
+			// get academic level
+			$.getJSON(baseUrl + '/api/isi', function (data) {
+				var i,
+					fclFrag = $(document.createDocumentFragment()),
+					fcrFrag = $(document.createDocumentFragment()),
+					options;
 
-				colLeft.append(clFormGroup);
-				colRight.append(crFormGroup);
-				colAdmin.append(caDelButton);
+				for (i = 1; i <= 30; i++) {
+					options = $('<option></option>');
+					options.attr('value', i);
+					options.text(i + ' orang');
+					fclFrag.append(options);
+				}
 
-				$('#team-members').append(colLeft, colRight, colAdmin);
+				clFormControl.append(fclFrag);
 
-				// get academic level
-				$.getJSON('index.php?p=api&sp=akademik', function (data) {
-					var i,
-						fclFrag = $(document.createDocumentFragment()),
-						fcrFrag = $(document.createDocumentFragment()),
-						options;
-
-					for (i = 1; i <= 30; i++) {
-						options = $('<option></option>');
-						options.attr('value', i);
-						options.text(i + ' orang');
-						fclFrag.append(options);
-					}
-
-					clFormControl.append(fclFrag);
-
-					$.each(data, function() {
-						var opt = $('<option></option>');
-						opt.attr('value', this.key);
-						opt.text('lulus ' + this.value);
-						fcrFrag.append(opt);
-					});
-
-					crFormControl.append(fcrFrag);
+				$.each(data.academicDegrees, function() {
+					var opt = $('<option></option>');
+					opt.attr('value', this.key);
+					opt.text('lulus ' + this.value);
+					fcrFrag.append(opt);
 				});
 
-				caDelButton.one('click', function (e) {
-					e.preventDefault();
-					colLeft.remove();
-					colRight.remove();
-					colAdmin.remove();
-				});
-			}
+				crFormControl.append(fcrFrag);
+			});
 
+			caDelButton.one('click', function (e) {
+				e.preventDefault();
+				colLeft.remove();
+				colRight.remove();
+				colAdmin.remove();
+			});
 		});
 	}
+
+	
 
 	if ($('#btn-add-products').length) {
 
@@ -154,10 +149,10 @@ $(document).ready(function () {
 
 				//set elements' attributes;
 				row.addClass('row');
-				colName.addClass('col-md-4');
-				colYear.addClass('col-md-3');
-				colPlatform.addClass('col-md-4');
-				colAdmin.addClass('col-md-1');
+				colName.addClass('col-md-4 col-xs-6');
+				colYear.addClass('col-md-3 col-xs-6');
+				colPlatform.addClass('col-md-4 col-xs-11');
+				colAdmin.addClass('col-md-1 col-xs-1');
 
 				cnFormGroup.addClass('form-group');
 				cnFormControl.addClass('form-control');
@@ -249,6 +244,7 @@ $(document).ready(function () {
 					$('#txt-studio-name').parent().removeClass('has-error');
 				} else {
 					$('#txt-studio-name').parent().addClass('has-error');
+					$('#txt-studio-name').focus();
 					return;
 				}
 

@@ -53,6 +53,11 @@ $app->get('/direktori(/:alfabet)', function ($alphabet = 'a') {
     $gamedev->get_studios_directory_page($alphabet);
 });
 
+$app->get('/formulir(/:kunci)', function ($key = null) {
+    $gamedev = new GameDev;
+    $gamedev->get_entry_data_form($key);
+});
+
 $app->get('/api(/:type)', function ($type = '') {
     // print_r($type);
 	$gamedev = new GameDev;
@@ -70,8 +75,14 @@ $app->get('/api(/:type)', function ($type = '') {
 });
 
 // POST route
-$app->post('/post', function () {
-   echo 'This is a POST route';
+$app->post('/formulir/post', function () {
+   $gamedev = new GameDev;
+   $gamedev->save_users_inputs();
+});
+
+$app->post('/formulir/kunci', function () {
+    $gamedev = new GameDev;
+    $gamedev->save_users_key_request();
 });
 
 // PUT route
